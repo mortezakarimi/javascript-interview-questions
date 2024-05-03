@@ -11,7 +11,7 @@ jobs:
   convert_via_pandoc:
     runs-on: ubuntu-18.04    
     steps:      
-      - uses: actions/checkout@v2    
+      - uses: actions/checkout@v4    
 
       - name: Create output directory
         run: |
