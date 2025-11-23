@@ -506,7 +506,6 @@
 | 475 | [What are shadowing and illegal shadowing?](#what-are-shadowing-and-illegal-shadowing) |
 | 476 | [Why is it important to remove event listeners after use?](#why-is-it-important-to-remove-event-listeners-after-use) |
 | 477 | [What is structuredClone and how is it used for deep copying objects?](#what-is-structuredclone-and-how-is-it-used-for-deep-copying-objects) |
-
 <!-- TOC_END -->
 
 <!-- QUESTIONS_START -->
