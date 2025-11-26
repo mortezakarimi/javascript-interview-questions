@@ -9552,6 +9552,37 @@ Common use cases and benefits:
    
    **[⬆ Back to Top](#table-of-contents)**
 
+ 478. ### What is the difference between const and Object.freeze
+
+     The main difference is that `const` applies to **variables** (bindings), while `Object.freeze()` applies to **values** (objects).
+
+     1. **`const`**: Prevents the reassignment of a variable identifier. It ensures that the variable name always points to the same memory reference. However, if the variable holds an object or array, the *contents* of that object can still be modified.
+     2. **`Object.freeze()`**: Prevents the modification of an object's properties. It makes the object immutable (you cannot add, remove, or change properties), but it does not affect the variable assignment itself (unless the variable is also declared with `const`).
+
+     **Example:**
+
+     ```javascript
+       // Case 1: Using const (Reassignment prevented, Mutation allowed)
+       const person = { name: "John" };
+       person.name = "Doe"; // ✅ Allowed: The object is mutable
+       console.log(person.name); // "Doe"
+
+       // person = { name: "Jane" }; // ❌ Error: Assignment to constant variable
+
+       // Case 2: Using Object.freeze (Reassignment allowed, Mutation prevented)
+       let profile = { name: "John" };
+       Object.freeze(profile);
+
+       profile.name = "Doe"; // ❌ Ignored (or throws TypeError in strict mode)
+       console.log(profile.name); // "John"
+
+       profile = { name: "Jane" }; // ✅ Allowed: 'profile' is declared with 'let'
+       console.log(profile.name); // "Jane"
+       
+
+      **[⬆ Back to Top](#table-of-contents)**
+
+
 <!-- QUESTIONS_END -->
 ### Coding Exercise
 
