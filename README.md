@@ -6809,7 +6809,7 @@ Because of hoisting, functions can be used before they are declared.
         diameter() {
           return this.radius * 2;
         },
-        perimeter: () => 2 * Math.PI * this.radius,
+        perimeter: () => 2 * Math.PI * this?.radius,
       };
       ```
 
