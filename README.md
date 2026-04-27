@@ -14,7 +14,16 @@
 
 > Practice 280+ JavaScript coding interview questions in-browser. Built by ex-FAANG interviewers. No AI-generated fluff. No fake reviews. [Try GreatFrontEnd →](https://www.greatfrontend.com/questions/formats/javascript-functions?utm_source=github&utm_medium=referral&utm_campaign=sudheerj-js&fpr=sudheerj&gnrs=sudheerj) 💡
 
----
+
+<div>
+<p align="center">
+  <a href="https://zerotomastery.io/?utm_source=github&utm_medium=sponsor&utm_campaign=javascript-interview-questions">
+    <img src="./images/collab/ztm.gif" alt="ZTM Logo" width="100%" />
+  </a>
+</p>
+</div>
+
+> I recommend this [JavaScript Projects courses](https://zerotomastery.io/courses/javascript-projects/?utm_source=github&utm_medium=sponsor&utm_campaign=javascript-interview-questions) and this [Advanced JavaScript Course](https://zerotomastery.io/courses/advanced-javascript-concepts/?utm_source=github&utm_medium=sponsor&utm_campaign=javascript-interview-questions) to become top 10% at JS and [this coding interview bootcamp](https://zerotomastery.io/courses/learn-data-structures-and-algorithms/?utm_source=github&utm_medium=sponsor&utm_campaign=javascript-interview-questions) to ace your coding interview and actually get hired.
 
 ### Table of Contents
 
@@ -499,6 +508,14 @@
 | 476 | [Why is it important to remove event listeners after use?](#why-is-it-important-to-remove-event-listeners-after-use) |
 | 477 | [What is structuredClone and how is it used for deep copying objects?](#what-is-structuredclone-and-how-is-it-used-for-deep-copying-objects) |
 | 478 | [What is the difference between const and Object.freeze](#what-is-the-difference-between-const-and-objectfreeze) |
+| 479 | [What is Promise.any and when should it be used?](#what-is-promiseany-and-when-should-it-be-used) |
+| 480 | [What is BigInt and how is it different from Number?](#what-is-bigint-and-how-is-it-different-from-number) |
+| 481 | [What are private class fields in JavaScript?](#what-are-private-class-fields-in-javascript) |
+| 482 | [What is the Array.prototype.at() method and why is it useful?](#what-is-the-arrayprototypeat-method-and-why-is-it-useful) |
+| 483 | [What is top-level await in JavaScript modules?](#what-is-top-level-await-in-javascript-modules) |
+| 484 | [What are WeakRef and FinalizationRegistry used for?](#what-are-weakref-and-finalizationregistry-used-for) |
+| 485 | [What are logical assignment operators (&&=, ||=, ??=)?](#what-are-logical-assignment-operators) |
+| 486 | [What is the Temporal API and why is it proposed as a replacement for Date?](#what-is-the-temporal-api-and-why-is-it-proposed-as-a-replacement-for-date) |
 <!-- TOC_END -->
 
 <!-- QUESTIONS_START -->
@@ -9575,6 +9592,1330 @@ Common use cases and benefits:
        
 
       **[⬆ Back to Top](#table-of-contents)**
+
+479. ### What is Promise.any and when should it be used?
+
+     `Promise.any()` is a Promise combinator method introduced in ES2021 that takes an iterable of promises and returns a single promise that fulfills as soon as any of the input promises fulfills. It resolves with the value of the first promise that successfully resolves.
+
+     **Key Characteristics:**
+
+     1. **First Success Wins**: Returns the value of the first fulfilled promise
+     2. **Ignores Rejections**: Continues waiting even if some promises reject
+     3. **AggregateError**: Only rejects if all promises reject (with an AggregateError containing all rejection reasons)
+
+     **When to Use Promise.any():**
+
+     - **Fastest Resource**: When fetching from multiple mirrors/CDNs and you want the first successful response
+     - **Redundant Services**: When calling multiple redundant APIs and only need one to succeed
+     - **Fallback Mechanisms**: When you have primary and backup data sources
+
+     **Example:**
+
+     ```javascript
+     // Fetching from multiple CDNs - use whichever responds first
+     const cdn1 = fetch('https://cdn1.example.com/data.json');
+     const cdn2 = fetch('https://cdn2.example.com/data.json');
+     const cdn3 = fetch('https://cdn3.example.com/data.json');
+
+     Promise.any([cdn1, cdn2, cdn3])
+       .then(response => response.json())
+       .then(data => console.log('First successful response:', data))
+       .catch(error => {
+         // Only if ALL promises reject
+         console.error('All CDNs failed:', error.errors);
+       });
+
+     // Comparison with other Promise methods:
+     const promises = [
+       Promise.reject('Error 1'),
+       Promise.resolve('Success!'),
+       Promise.reject('Error 2')
+     ];
+
+     // Promise.any() - Returns first fulfilled promise
+     Promise.any(promises)
+       .then(value => console.log(value)); // Output: "Success!"
+
+     // Promise.race() - Returns first settled promise (fulfilled or rejected)
+     Promise.race(promises)
+       .catch(error => console.log(error)); // Output: "Error 1"
+
+     // Promise.all() - Waits for all or fails on first rejection
+     Promise.all(promises)
+       .catch(error => console.log(error)); // Output: "Error 1"
+
+     // Promise.allSettled() - Waits for all, never rejects
+     Promise.allSettled(promises)
+       .then(results => console.log(results));
+     // Output: [
+     //   { status: 'rejected', reason: 'Error 1' },
+     //   { status: 'fulfilled', value: 'Success!' },
+     //   { status: 'rejected', reason: 'Error 2' }
+     // ]
+     ```
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+480. ### What is BigInt and how is it different from Number?
+
+     `BigInt` is a built-in JavaScript object (introduced in ES2020) that provides a way to represent whole numbers larger than 2^53 - 1 (the largest number JavaScript can reliably represent with the `Number` primitive).
+
+     **Key Differences:**
+
+     | Feature | Number | BigInt |
+     |---------|--------|--------|
+     | **Maximum Safe Integer** | 2^53 - 1 (9,007,199,254,740,991) | No theoretical limit |
+     | **Syntax** | `42` | `42n` or `BigInt(42)` |
+     | **Type** | `"number"` | `"bigint"` |
+     | **Decimals** | Supports decimals | Integer only |
+     | **Math Operations** | Works with Math object | Cannot use Math object |
+     | **JSON** | Native JSON support | No native JSON support |
+     | **Mixing Operations** | N/A | Cannot mix with Number without explicit conversion |
+
+     **Creating BigInt:**
+
+     ```javascript
+     // Using 'n' suffix
+     const bigInt1 = 9007199254740991n;
+     const bigInt2 = 123456789012345678901234567890n;
+
+     // Using BigInt() function
+     const bigInt3 = BigInt("9007199254740991");
+     const bigInt4 = BigInt(9007199254740991);
+
+     console.log(typeof bigInt1); // "bigint"
+     ```
+
+     **Common Use Cases:**
+
+     ```javascript
+     // 1. Large integer arithmetic
+     const largeNumber = 9007199254740992n;
+     const result = largeNumber + 1n; // 9007199254740993n
+
+     // Problem with Number:
+     console.log(9007199254740992 + 1); // 9007199254740992 (incorrect!)
+     console.log(9007199254740992n + 1n); // 9007199254740993n (correct!)
+
+     // 2. High-precision calculations
+     const factorial = (n) => {
+       if (n === 0n) return 1n;
+       return n * factorial(n - 1n);
+     };
+     console.log(factorial(50n)); // Accurate result for 50!
+
+     // 3. Cryptography and unique identifiers
+     const uniqueId = 1234567890123456789012345n;
+
+     // Important: Cannot mix BigInt and Number
+     const num = 10;
+     const big = 20n;
+     // console.log(num + big); // TypeError: Cannot mix BigInt and other types
+     console.log(BigInt(num) + big); // 30n (correct)
+     console.log(num + Number(big)); // 30 (correct, but loses precision for large values)
+
+     // Comparison works across types
+     console.log(10n == 10);  // true
+     console.log(10n === 10); // false (different types)
+     console.log(10n < 15);   // true
+     ```
+
+     **Limitations:**
+
+     ```javascript
+     // No decimal support
+     const decimal = 3.5n; // SyntaxError
+
+     // Cannot use with Math object
+     Math.sqrt(16n); // TypeError
+
+     // JSON serialization requires custom handling
+     const data = { id: 123n };
+     JSON.stringify(data); // TypeError: Do not know how to serialize a BigInt
+
+     // Solution for JSON:
+     JSON.stringify(data, (key, value) => 
+       typeof value === 'bigint' ? value.toString() : value
+     );
+     ```
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+481. ### What are private class fields in JavaScript?
+
+     Private class fields (introduced in ES2022) are class properties that are only accessible within the class itself. They are prefixed with a hash symbol (`#`) and provide true encapsulation in JavaScript classes.
+
+     **Key Features:**
+
+     1. **True Privacy**: Cannot be accessed from outside the class, even using bracket notation
+     2. **Instance Privacy**: Each instance has its own private fields
+     3. **Subclass Isolation**: Private fields are not inherited or accessible by subclasses
+     4. **Hard Private**: Unlike convention-based privacy (e.g., `_privateField`), these are enforced by the language
+
+     **Syntax and Examples:**
+
+     ```javascript
+     class BankAccount {
+       // Private fields (must be declared at class level)
+       #balance = 0;
+       #accountNumber;
+       #pin;
+
+       // Public field
+       accountHolder;
+
+       constructor(holder, accountNumber, initialDeposit, pin) {
+         this.accountHolder = holder;
+         this.#accountNumber = accountNumber;
+         this.#balance = initialDeposit;
+         this.#pin = pin;
+       }
+
+       // Private method
+       #validatePin(inputPin) {
+         return this.#pin === inputPin;
+       }
+
+       // Public methods can access private fields
+       deposit(amount) {
+         if (amount > 0) {
+           this.#balance += amount;
+           return true;
+         }
+         return false;
+       }
+
+       withdraw(amount, pin) {
+         if (!this.#validatePin(pin)) {
+           throw new Error('Invalid PIN');
+         }
+         if (amount > 0 && amount <= this.#balance) {
+           this.#balance -= amount;
+           return amount;
+         }
+         throw new Error('Insufficient funds');
+       }
+
+       getBalance(pin) {
+         if (!this.#validatePin(pin)) {
+           throw new Error('Invalid PIN');
+         }
+         return this.#balance;
+       }
+
+       // Static private fields
+       static #bankName = 'SecureBank';
+       
+       static getBankName() {
+         return this.#bankName;
+       }
+     }
+
+     // Usage
+     const account = new BankAccount('Alice', '123456', 1000, '1234');
+
+     account.deposit(500);
+     console.log(account.getBalance('1234')); // 1500
+
+     // Attempting to access private fields throws an error
+     console.log(account.#balance); // SyntaxError: Private field '#balance' must be declared in an enclosing class
+     console.log(account['#balance']); // undefined (bracket notation doesn't work)
+
+     // Even reflection doesn't work
+     console.log(Object.keys(account)); // ['accountHolder']
+     console.log(Reflect.ownKeys(account)); // Does not include private fields in public APIs
+     ```
+
+     **Benefits over Convention-Based Privacy:**
+
+     ```javascript
+     // Old way (convention-based, not truly private)
+     class OldAccount {
+       constructor(balance) {
+         this._balance = balance; // Convention: underscore means "private"
+       }
+
+       getBalance() {
+         return this._balance;
+       }
+     }
+
+     const oldAcc = new OldAccount(1000);
+     console.log(oldAcc._balance); // 1000 (accessible! Not truly private)
+     oldAcc._balance = 999999; // Can be modified from outside
+
+     // New way (truly private)
+     class NewAccount {
+       #balance;
+
+       constructor(balance) {
+         this.#balance = balance;
+       }
+
+       getBalance() {
+         return this.#balance;
+       }
+     }
+
+     const newAcc = new NewAccount(1000);
+     // console.log(newAcc.#balance); // SyntaxError
+     // newAcc.#balance = 999999; // SyntaxError
+     ```
+
+     **Private Fields with Inheritance:**
+
+     ```javascript
+     class Parent {
+       #privateField = 'parent private';
+
+       getPrivate() {
+         return this.#privateField;
+       }
+     }
+
+     class Child extends Parent {
+       #privateField = 'child private'; // Different field, doesn't override
+
+       getChildPrivate() {
+         return this.#privateField;
+       }
+     }
+
+     const child = new Child();
+     console.log(child.getPrivate()); // 'parent private'
+     console.log(child.getChildPrivate()); // 'child private'
+     ```
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+482. ### What is the Array.prototype.at() method and why is it useful?
+
+     The `at()` method (introduced in ES2022) allows you to access array elements using both positive and negative indices. It provides a simpler and more intuitive way to access elements from the end of an array.
+
+     **Syntax:**
+
+     ```javascript
+     array.at(index)
+     ```
+
+     **Key Features:**
+
+     1. **Negative Indexing**: Negative indices count from the end of the array
+     2. **Cleaner Syntax**: More readable than traditional methods for accessing end elements
+     3. **Works on Strings**: Also available on String.prototype
+     4. **Returns undefined**: Returns `undefined` for out-of-bounds indices (like bracket notation)
+
+     **Examples:**
+
+     ```javascript
+     const fruits = ['apple', 'banana', 'orange', 'mango', 'grape'];
+
+     // Positive indices (same as bracket notation)
+     console.log(fruits.at(0));  // 'apple'
+     console.log(fruits.at(2));  // 'orange'
+     console.log(fruits[2]);     // 'orange' (equivalent)
+
+     // Negative indices (the game changer!)
+     console.log(fruits.at(-1)); // 'grape' (last element)
+     console.log(fruits.at(-2)); // 'mango' (second to last)
+     console.log(fruits.at(-5)); // 'apple' (first element)
+
+     // Out of bounds
+     console.log(fruits.at(10));  // undefined
+     console.log(fruits.at(-10)); // undefined
+
+     // Comparison with traditional approaches:
+     const arr = [10, 20, 30, 40, 50];
+
+     // Getting last element
+     console.log(arr.at(-1));           // 50 ✅ Clean and simple
+     console.log(arr[arr.length - 1]);  // 50 ❌ Verbose
+     console.log(arr.slice(-1)[0]);     // 50 ❌ Creates new array
+
+     // Getting second to last
+     console.log(arr.at(-2));           // 40 ✅ Clean
+     console.log(arr[arr.length - 2]);  // 40 ❌ Verbose
+
+     // Dynamic index from the end
+     const n = 3;
+     console.log(arr.at(-n));           // 30 ✅ Clean
+     console.log(arr[arr.length - n]);  // 30 ❌ Verbose
+     ```
+
+     **Works with Strings:**
+
+     ```javascript
+     const text = 'Hello, World!';
+
+     console.log(text.at(0));   // 'H'
+     console.log(text.at(-1));  // '!'
+     console.log(text.at(-6));  // 'W'
+     ```
+
+     **Real-World Use Cases:**
+
+     ```javascript
+     // 1. Processing the last few elements
+     const scores = [85, 92, 78, 95, 88];
+     const lastScore = scores.at(-1);
+     const secondLastScore = scores.at(-2);
+     console.log(`Last two scores: ${secondLastScore}, ${lastScore}`);
+
+     // 2. Circular/wraparound logic
+     function getElement(array, index) {
+       // Positive: use directly
+       // Negative: count from end
+       return array.at(index);
+     }
+
+     // 3. Working with dynamic data
+     const messages = ['msg1', 'msg2', 'msg3', 'msg4'];
+     const latest = messages.at(-1); // Always gets the latest
+
+     // 4. Palindrome checking
+     function isPalindrome(str) {
+       const len = str.length;
+       for (let i = 0; i < len / 2; i++) {
+         if (str.at(i) !== str.at(-i - 1)) {
+           return false;
+         }
+       }
+       return true;
+     }
+     console.log(isPalindrome('racecar')); // true
+
+     // 5. Safe access with method chaining
+     const data = [1, 2, 3];
+     console.log(data.filter(x => x > 1).at(-1)); // 3 (last of filtered results)
+     ```
+
+     **Benefits over Traditional Methods:**
+
+     ```javascript
+     const items = ['a', 'b', 'c', 'd', 'e'];
+
+     // Traditional (verbose and error-prone)
+     const last = items[items.length - 1];
+     const thirdFromEnd = items[items.length - 3];
+
+     // Modern (clean and intuitive)
+     const last2 = items.at(-1);
+     const thirdFromEnd2 = items.at(-3);
+
+     // Especially useful in expressions
+     const result = someFunction() || items.at(-1); // Clean
+     const result2 = someFunction() || items[items.length - 1]; // Cluttered
+     ```
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+483. ### What is top-level await in JavaScript modules?
+
+     Top-level await is a feature (introduced in ES2022) that allows you to use the `await` keyword at the top level of ES modules, outside of async functions. This enables modules to act as asynchronous functions themselves.
+
+     **Key Characteristics:**
+
+     1. **Module-Only**: Only works in ES modules (not in scripts or CommonJS)
+     2. **Blocks Execution**: The module graph execution pauses until the promise resolves
+     3. **No Async Wrapper**: No need to wrap await in an async function
+     4. **Import Dependency**: Modules that import a module using top-level await will wait for it
+
+     **Before Top-Level Await:**
+
+     ```javascript
+     // ❌ Old way: Wrapper function required
+     // config.js
+     let config;
+
+     async function loadConfig() {
+       const response = await fetch('/api/config');
+       config = await response.json();
+     }
+
+     loadConfig(); // Returns a promise, but we can't await here
+
+     export { config }; // config might be undefined when imported!
+
+     // ❌ Or using IIFE (Immediately Invoked Function Expression)
+     (async () => {
+       const response = await fetch('/api/config');
+       const config = await response.json();
+       // Now what? How to export?
+     })();
+     ```
+
+     **With Top-Level Await:**
+
+     ```javascript
+     // ✅ New way: Direct top-level await
+     // config.js
+     const response = await fetch('/api/config');
+     const config = await response.json();
+
+     export { config }; // config is guaranteed to be loaded
+     ```
+
+     **Real-World Use Cases:**
+
+     ```javascript
+     // 1. Loading configuration before app starts
+     // config.js
+     const response = await fetch('/api/config');
+     export const config = await response.json();
+
+     // 2. Conditional module loading
+     // feature.js
+     const isDevelopment = process.env.NODE_ENV === 'development';
+     const debugModule = isDevelopment 
+       ? await import('./debug-tools.js')
+       : null;
+
+     export const debug = debugModule?.debug || (() => {});
+
+     // 3. Database connection
+     // db.js
+     import { MongoClient } from 'mongodb';
+
+     const client = new MongoClient(process.env.DB_URL);
+     await client.connect();
+     export const db = client.db('myapp');
+     console.log('Database connected!');
+
+     // 4. Establishing dependencies
+     // auth.js
+     const permissions = await fetch('/api/permissions').then(r => r.json());
+     export const hasPermission = (user, action) => {
+       return permissions[user]?.includes(action) || false;
+     };
+
+     // 5. Feature detection
+     // capabilities.js
+     let wasmSupported = false;
+     try {
+       await WebAssembly.instantiate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]));
+       wasmSupported = true;
+     } catch {}
+
+     export { wasmSupported };
+     ```
+
+     **Module Import Blocking:**
+
+     ```javascript
+     // slow-module.js
+     console.log('Starting slow module');
+     await new Promise(resolve => setTimeout(resolve, 3000));
+     console.log('Slow module ready');
+     export const data = 'Loaded!';
+
+     // main.js
+     console.log('Before import');
+     import { data } from './slow-module.js'; // Waits for top-level await
+     console.log('After import:', data);
+
+     // Console output:
+     // "Before import"
+     // "Starting slow module"
+     // ... 3 second pause ...
+     // "Slow module ready"
+     // "After import: Loaded!"
+     ```
+
+     **Execution Order with Multiple Modules:**
+
+     ```javascript
+     // a.js
+     console.log('A: start');
+     await new Promise(r => setTimeout(r, 100));
+     console.log('A: end');
+     export const a = 'A';
+
+     // b.js
+     console.log('B: start');
+     import { a } from './a.js';
+     console.log('B: got', a);
+     export const b = 'B';
+
+     // main.js
+     console.log('Main: start');
+     import { b } from './b.js';
+     import { a } from './a.js';
+     console.log('Main:', a, b);
+
+     // Output:
+     // "A: start"
+     // (100ms pause)
+     // "A: end"
+     // "B: start"
+     // "B: got A"
+     // "Main: start"
+     // "Main: A B"
+     ```
+
+     **Error Handling:**
+
+     ```javascript
+     // data-loader.js
+     let data;
+     try {
+       const response = await fetch('/api/data');
+       if (!response.ok) throw new Error('Failed to fetch');
+       data = await response.json();
+     } catch (error) {
+       console.error('Failed to load data:', error);
+       data = { default: true }; // Fallback data
+     }
+
+     export { data };
+     ```
+
+     **Important Considerations:**
+
+     1. **Performance**: Top-level await blocks the entire module graph, so use sparingly
+     2. **Error Impact**: If a top-level await rejects and isn't caught, it can prevent module loading
+     3. **Not for Scripts**: Only works in ES modules (files with `type="module"` or `.mjs` extension)
+     4. **Circular Dependencies**: Be careful with circular imports when using top-level await
+
+     ```javascript
+     // ❌ Don't do this - blocks everything
+     await new Promise(r => setTimeout(r, 10000)); // 10 second delay!
+
+     // ✅ Better approach for initialization
+     const dataPromise = fetch('/api/data').then(r => r.json());
+     export const getData = () => dataPromise; // Let consumers decide when to await
+     ```
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+484. ### What are WeakRef and FinalizationRegistry used for?
+
+     `WeakRef` and `FinalizationRegistry` are advanced features (introduced in ES2021) for managing memory and object lifecycles in JavaScript. They provide low-level control over garbage collection behavior.
+
+     **WeakRef (Weak Reference):**
+
+     A `WeakRef` creates a weak reference to an object, meaning it doesn't prevent the object from being garbage collected. Unlike regular references, holding a WeakRef doesn't keep the object alive.
+
+     **Syntax:**
+
+     ```javascript
+     const weakRef = new WeakRef(targetObject);
+     const obj = weakRef.deref(); // Get the object (or undefined if collected)
+     ```
+
+     **WeakRef Examples:**
+
+     ```javascript
+     // Creating a weak reference
+     let obj = { name: 'Important Data', value: 42 };
+     const weakRef = new WeakRef(obj);
+
+     // Access the object
+     console.log(weakRef.deref()); // { name: 'Important Data', value: 42 }
+
+     // Remove strong reference
+     obj = null;
+
+     // At some point, after garbage collection
+     console.log(weakRef.deref()); // undefined (object was collected)
+
+     // Practical use: Caching without memory leaks
+     class ImageCache {
+       #cache = new Map();
+
+       getImage(url) {
+         const weakRef = this.#cache.get(url);
+         if (weakRef) {
+           const image = weakRef.deref();
+           if (image) {
+             console.log('Cache hit!');
+             return image;
+           }
+         }
+
+         // Load image if not in cache or was collected
+         console.log('Cache miss, loading...');
+         const newImage = this.loadImage(url);
+         this.#cache.set(url, new WeakRef(newImage));
+         return newImage;
+       }
+
+       loadImage(url) {
+         // Simulate loading
+         return { url, data: `Image data for ${url}` };
+       }
+     }
+
+     const cache = new ImageCache();
+     const img1 = cache.getImage('photo.jpg'); // Cache miss
+     const img2 = cache.getImage('photo.jpg'); // Cache hit!
+     ```
+
+     **FinalizationRegistry:**
+
+     `FinalizationRegistry` allows you to register callbacks that run after objects are garbage collected. This enables cleanup actions when objects are no longer needed.
+
+     **Syntax:**
+
+     ```javascript
+     const registry = new FinalizationRegistry((heldValue) => {
+       // Cleanup callback when object is garbage collected
+       console.log('Cleaning up:', heldValue);
+     });
+
+     registry.register(targetObject, heldValue, unregisterToken);
+     ```
+
+     **FinalizationRegistry Examples:**
+
+     ```javascript
+     // Basic usage
+     const registry = new FinalizationRegistry((filename) => {
+       console.log(`File ${filename} can be deleted - object was collected`);
+       // Perform cleanup: close file handles, free resources, etc.
+     });
+
+     let fileObject = { name: 'temp.txt', handle: 'handle123' };
+     registry.register(fileObject, 'temp.txt');
+
+     // When fileObject is garbage collected, the callback runs
+     fileObject = null; // Remove strong reference
+
+     // Real-world example: Resource management
+     class FileManager {
+       #registry = new FinalizationRegistry((filepath) => {
+         this.#closeFile(filepath);
+       });
+
+       #openFiles = new Map();
+
+       openFile(filepath) {
+         const handle = this.#actuallyOpenFile(filepath);
+         const file = { filepath, handle };
+         
+         this.#openFiles.set(filepath, handle);
+         this.#registry.register(file, filepath);
+         
+         return file;
+       }
+
+       #actuallyOpenFile(filepath) {
+         console.log(`Opening ${filepath}`);
+         return { /* file handle */ };
+       }
+
+       #closeFile(filepath) {
+         const handle = this.#openFiles.get(filepath);
+         if (handle) {
+           console.log(`Auto-closing ${filepath}`);
+           // Close file handle
+           this.#openFiles.delete(filepath);
+         }
+       }
+     }
+
+     // Database connection pooling
+     class ConnectionPool {
+       #registry = new FinalizationRegistry((connectionId) => {
+         console.log(`Connection ${connectionId} released`);
+         this.#releaseConnection(connectionId);
+       });
+
+       #connections = new Map();
+
+       getConnection() {
+         const connectionId = Math.random().toString(36);
+         const connection = { id: connectionId, query: () => {} };
+         
+         this.#connections.set(connectionId, connection);
+         this.#registry.register(connection, connectionId);
+         
+         return connection;
+       }
+
+       #releaseConnection(connectionId) {
+         this.#connections.delete(connectionId);
+         // Return connection to pool
+       }
+     }
+
+     // Using unregister token to prevent cleanup
+     const cleanupRegistry = new FinalizationRegistry((msg) => {
+       console.log('Cleanup:', msg);
+     });
+
+     let importantObj = { data: 'important' };
+     const token = {}; // Unregister token
+
+     cleanupRegistry.register(importantObj, 'important data', token);
+
+     // Later, if you want to prevent cleanup
+     cleanupRegistry.unregister(token); // Callback won't run even after GC
+     ```
+
+     **Combined Example - Cache with Cleanup:**
+
+     ```javascript
+     class SmartCache {
+       #cache = new Map();
+       #registry = new FinalizationRegistry((key) => {
+         console.log(`Removing cache entry: ${key}`);
+         this.#cache.delete(key);
+       });
+
+       set(key, value) {
+         const weakRef = new WeakRef(value);
+         this.#cache.set(key, weakRef);
+         this.#registry.register(value, key, weakRef);
+       }
+
+       get(key) {
+         const weakRef = this.#cache.get(key);
+         if (!weakRef) return undefined;
+
+         const value = weakRef.deref();
+         if (value === undefined) {
+           // Object was collected, clean up map
+           this.#cache.delete(key);
+         }
+         return value;
+       }
+
+       has(key) {
+         return this.get(key) !== undefined;
+       }
+
+       delete(key) {
+         const weakRef = this.#cache.get(key);
+         if (weakRef) {
+           this.#registry.unregister(weakRef);
+           this.#cache.delete(key);
+         }
+       }
+     }
+
+     const cache = new SmartCache();
+     let data = { huge: 'dataset' };
+     cache.set('myData', data);
+     
+     console.log(cache.get('myData')); // { huge: 'dataset' }
+     
+     data = null; // Remove strong reference
+     // After GC, cache entry is automatically cleaned up
+     ```
+
+     **Important Caveats:**
+
+     1. **Non-Deterministic**: Garbage collection timing is unpredictable
+     2. **No Guarantees**: The finalization callback may never run (e.g., if the process exits)
+     3. **Performance**: These are advanced features; use only when necessary
+     4. **Avoid Over-Use**: Regular JavaScript patterns are usually better
+     5. **Not for Critical Logic**: Don't rely on finalization for business logic
+
+     **When to Use:**
+
+     - ✅ Caching large objects that can be recreated
+     - ✅ Managing native resources (file handles, sockets)
+     - ✅ Automatic cleanup of external resources
+     - ✅ Memory-sensitive applications
+     - ❌ Not for regular object lifecycle management
+     - ❌ Not for critical cleanup (use explicit cleanup instead)
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+485. ### What are logical assignment operators?
+
+     Logical assignment operators (introduced in ES2021) combine logical operations (`&&`, `||`, `??`) with assignment (`=`). They provide a concise way to assign values based on logical conditions.
+
+     **The Three Operators:**
+
+     1. **`&&=`** - Logical AND assignment
+     2. **`||=`** - Logical OR assignment  
+     3. **`??=`** - Nullish coalescing assignment
+
+     **Logical AND Assignment (&&=):**
+
+     Assigns the right-hand value only if the left-hand value is truthy.
+
+     ```javascript
+     // Syntax: x &&= y
+     // Equivalent to: x && (x = y)
+     // or: if (x) { x = y; }
+
+     let user = { name: 'Alice', admin: true };
+
+     // Traditional approach
+     if (user.admin) {
+       user.admin = 'super';
+     }
+
+     // With &&=
+     user.admin &&= 'super';
+     console.log(user.admin); // 'super'
+
+     let guest = { name: 'Bob', admin: false };
+     guest.admin &&= 'super';
+     console.log(guest.admin); // false (unchanged, because falsy)
+
+     // Practical example: Conditional transformation
+     const data = {
+       username: 'john_doe',
+       email: 'JOHN@EXAMPLE.COM'
+     };
+
+     // Normalize email only if it exists
+     data.email &&= data.email.toLowerCase();
+     console.log(data.email); // 'john@example.com'
+
+     // Use case: Applying transformations
+     const product = { name: 'Widget', price: 29.99 };
+     product.price &&= product.price * 1.1; // Apply 10% increase
+     console.log(product.price); // 32.989
+     ```
+
+     **Logical OR Assignment (||=):**
+
+     Assigns the right-hand value only if the left-hand value is falsy.
+
+     ```javascript
+     // Syntax: x ||= y
+     // Equivalent to: x || (x = y)
+     // or: if (!x) { x = y; }
+
+     let config = { timeout: 0 };
+
+     // Traditional approach
+     if (!config.timeout) {
+       config.timeout = 3000;
+     }
+
+     // With ||=
+     config.timeout ||= 3000;
+     console.log(config.timeout); // 3000
+
+     // Setting default values
+     let options = {};
+     options.theme ||= 'dark';
+     options.lang ||= 'en';
+     options.debug ||= false;
+
+     console.log(options); // { theme: 'dark', lang: 'en', debug: false }
+
+     // Practical example: Form defaults
+     function processForm(formData) {
+       formData.country ||= 'USA';
+       formData.newsletter ||= false;
+       formData.age ||= 18;
+       return formData;
+     }
+
+     console.log(processForm({ name: 'Alice' }));
+     // { name: 'Alice', country: 'USA', newsletter: false, age: 18 }
+
+     // Use case: Lazy initialization
+     class Calculator {
+       #cache;
+
+       compute(x) {
+         this.#cache ||= new Map(); // Initialize only once
+         
+         if (!this.#cache.has(x)) {
+           this.#cache.set(x, x * x);
+         }
+         return this.#cache.get(x);
+       }
+     }
+     ```
+
+     **Nullish Coalescing Assignment (??=):**
+
+     Assigns the right-hand value only if the left-hand value is `null` or `undefined` (nullish).
+
+     ```javascript
+     // Syntax: x ??= y
+     // Equivalent to: x ?? (x = y)
+     // or: if (x === null || x === undefined) { x = y; }
+
+     let settings = { volume: 0, brightness: null };
+
+     // Traditional approach
+     if (settings.brightness === null || settings.brightness === undefined) {
+       settings.brightness = 50;
+     }
+
+     // With ??=
+     settings.volume ??= 50;      // Unchanged (0 is not nullish)
+     settings.brightness ??= 50;  // Changed (null is nullish)
+
+     console.log(settings); // { volume: 0, brightness: 50 }
+
+     // Key difference from ||=
+     let data = {
+       count: 0,
+       active: false,
+       name: ''
+     };
+
+     // With ||= (treats falsy values as missing)
+     let copy1 = { ...data };
+     copy1.count ||= 10;    // Changes to 10 (0 is falsy)
+     copy1.active ||= true; // Changes to true (false is falsy)
+     copy1.name ||= 'Unknown'; // Changes to 'Unknown' ('' is falsy)
+
+     // With ??= (only treats null/undefined as missing)
+     let copy2 = { ...data };
+     copy2.count ??= 10;    // Stays 0 (not nullish)
+     copy2.active ??= true; // Stays false (not nullish)
+     copy2.name ??= 'Unknown'; // Stays '' (not nullish)
+
+     console.log(copy1); // { count: 10, active: true, name: 'Unknown' }
+     console.log(copy2); // { count: 0, active: false, name: '' }
+
+     // Practical example: API defaults
+     function fetchUser(userId, options = {}) {
+       options.cache ??= true;
+       options.timeout ??= 5000;
+       options.retries ??= 3;
+       // Note: Won't override if explicitly set to 0 or false
+       
+       console.log('Fetching with options:', options);
+     }
+
+     fetchUser(1, { cache: false }); 
+     // { cache: false, timeout: 5000, retries: 3 }
+     // cache stays false (not nullish)
+     ```
+
+     **Comparison Table:**
+
+     ```javascript
+     let obj = { a: 0, b: false, c: '', d: null, e: undefined };
+
+     // &&= (assigns if truthy)
+     obj.a &&= 100; // Unchanged (0 is falsy)
+     obj.b &&= 100; // Unchanged (false is falsy)
+     obj.c &&= 100; // Unchanged ('' is falsy)
+
+     // ||= (assigns if falsy)
+     obj.a ||= 100; // Changes to 100
+     obj.b ||= 100; // Changes to 100
+     obj.c ||= 100; // Changes to 100
+
+     // ??= (assigns if nullish)
+     obj.a ??= 100; // Unchanged (0 is not nullish)
+     obj.b ??= 100; // Unchanged (false is not nullish)
+     obj.c ??= 100; // Unchanged ('' is not nullish)
+     obj.d ??= 100; // Changes to 100 (null is nullish)
+     obj.e ??= 100; // Changes to 100 (undefined is nullish)
+     ```
+
+     **Real-World Examples:**
+
+     ```javascript
+     // 1. Component state management
+     class Component {
+       state = {};
+
+       setState(newState) {
+         // Merge with defaults
+         newState.loading ??= false;
+         newState.error ??= null;
+         newState.data ??= [];
+         this.state = { ...this.state, ...newState };
+       }
+     }
+
+     // 2. Configuration merging
+     function createConfig(userConfig) {
+       const config = { ...userConfig };
+       config.env ??= 'production';
+       config.debug ??= false;
+       config.port ??= 3000;
+       config.host ??= 'localhost';
+       return config;
+     }
+
+     // 3. Memoization
+     const memoize = (fn) => {
+       const cache = new Map();
+       return (arg) => {
+         cache.has(arg) ||= cache.set(arg, fn(arg));
+         return cache.get(arg);
+       };
+     };
+
+     // 4. Safe property updates
+     function updateUser(user, updates) {
+       user.lastModified &&= new Date(); // Only if already has lastModified
+       user.email ??= updates.email;      // Only if email is missing
+       user.role ||= 'user';              // Only if role is falsy
+       return user;
+     }
+     ```
+
+     **Benefits:**
+
+     1. **Concise**: Shorter than traditional if statements
+     2. **Readable**: Clear intent - "assign if condition"
+     3. **Safe**: Avoids unnecessary assignments and side effects
+     4. **Performance**: Only evaluates right-hand side when needed
+
+     **[⬆ Back to Top](#table-of-contents)**
+
+486. ### What is the Temporal API and why is it proposed as a replacement for Date?
+
+     The Temporal API is a modern proposal (Stage 3) to replace JavaScript's problematic `Date` object. It provides a better, more intuitive way to work with dates and times in JavaScript.
+
+     **Problems with Date:**
+
+     ```javascript
+     // 1. Months are 0-indexed (January = 0, December = 11)
+     const date1 = new Date(2024, 0, 15); // January 15, 2024 (confusing!)
+     const date2 = new Date(2024, 12, 15); // Actually January 15, 2025 (overflow!)
+
+     // 2. Mutable (can lead to bugs)
+     const original = new Date('2024-01-15');
+     const modified = original;
+     modified.setMonth(5);
+     console.log(original); // Also changed! (unexpected)
+
+     // 3. Time zone confusion
+     const date3 = new Date('2024-01-15'); // Interprets as UTC
+     const date4 = new Date('2024-01-15T00:00:00'); // Interprets as local time!
+
+     // 4. Poor API design
+     date1.getYear(); // Returns 124 (not 2024!) - deprecated
+     date1.getFullYear(); // Returns 2024 (correct, but confusing naming)
+
+     // 5. No support for different calendar systems
+     // Can't work with Islamic, Hebrew, Chinese calendars, etc.
+
+     // 6. Limited date arithmetic
+     // Adding months is problematic
+     const jan31 = new Date(2024, 0, 31);
+     jan31.setMonth(jan31.getMonth() + 1); // Feb 31 -> Mar 2 (unexpected!)
+     ```
+
+     **Temporal API Types:**
+
+     The Temporal API provides several specialized types:
+
+     1. **`Temporal.PlainDate`** - Date without time (e.g., birthdays, holidays)
+     2. **`Temporal.PlainTime`** - Time without date (e.g., daily alarm)
+     3. **`Temporal.PlainDateTime`** - Date and time without time zone
+     4. **`Temporal.ZonedDateTime`** - Date, time, and time zone
+     5. **`Temporal.Instant`** - Exact moment in time (like timestamps)
+     6. **`Temporal.Duration`** - Length of time
+     7. **`Temporal.PlainYearMonth`** - Year and month (e.g., credit card expiry)
+     8. **`Temporal.PlainMonthDay`** - Month and day (e.g., recurring anniversary)
+
+     **Basic Examples:**
+
+     ```javascript
+     // 1. Creating dates (intuitive month numbering!)
+     const date = Temporal.PlainDate.from('2024-01-15');
+     const date2 = Temporal.PlainDate.from({ year: 2024, month: 1, day: 15 });
+
+     console.log(date.toString()); // "2024-01-15"
+     console.log(date.month); // 1 (January is 1, not 0!)
+
+     // 2. Immutable (returns new instance)
+     const original = Temporal.PlainDate.from('2024-01-15');
+     const modified = original.add({ months: 1 });
+
+     console.log(original.toString()); // "2024-01-15" (unchanged)
+     console.log(modified.toString()); // "2024-02-15" (new instance)
+
+     // 3. Time zones (explicit and clear)
+     const zonedDateTime = Temporal.ZonedDateTime.from({
+       timeZone: 'America/New_York',
+       year: 2024,
+       month: 1,
+       day: 15,
+       hour: 10,
+       minute: 30
+     });
+
+     console.log(zonedDateTime.toString());
+     // "2024-01-15T10:30:00-05:00[America/New_York]"
+
+     // Convert to different time zone
+     const tokyo = zonedDateTime.withTimeZone('Asia/Tokyo');
+     console.log(tokyo.toString());
+     // "2024-01-16T00:30:00+09:00[Asia/Tokyo]"
+
+     // 4. Date arithmetic (smart handling)
+     const jan31 = Temporal.PlainDate.from('2024-01-31');
+     const nextMonth = jan31.add({ months: 1 });
+     console.log(nextMonth.toString()); // "2024-02-29" (handles leap year!)
+
+     // Different overflow strategies
+     const constrain = jan31.add({ months: 1 }, { overflow: 'constrain' });
+     console.log(constrain.toString()); // "2024-02-29"
+
+     const reject = jan31.add({ months: 1 }, { overflow: 'reject' });
+     // Throws RangeError: date doesn't exist
+
+     // 5. Duration calculations
+     const start = Temporal.PlainDate.from('2024-01-15');
+     const end = Temporal.PlainDate.from('2024-03-20');
+     const duration = start.until(end);
+
+     console.log(duration.toString()); // "P2M5D" (2 months, 5 days)
+     console.log(duration.total({ unit: 'days' })); // 65
+     ```
+
+     **Real-World Use Cases:**
+
+     ```javascript
+     // 1. Birthday calculator
+     function getAge(birthDate) {
+       const today = Temporal.Now.plainDateISO();
+       const birth = Temporal.PlainDate.from(birthDate);
+       const age = birth.until(today, { largestUnit: 'years' });
+       return age.years;
+     }
+
+     console.log(getAge('1990-05-15')); // Current age
+
+     // 2. Business days calculation
+     function addBusinessDays(date, days) {
+       let current = Temporal.PlainDate.from(date);
+       let remaining = days;
+
+       while (remaining > 0) {
+         current = current.add({ days: 1 });
+         const dayOfWeek = current.dayOfWeek;
+         if (dayOfWeek !== 6 && dayOfWeek !== 7) { // Not weekend
+           remaining--;
+         }
+       }
+
+       return current;
+     }
+
+     console.log(addBusinessDays('2024-01-15', 5).toString());
+
+     // 3. Meeting scheduler (with time zones)
+     function scheduleMeeting(localTime, attendeeTimeZones) {
+       const meeting = Temporal.ZonedDateTime.from(localTime);
+       
+       return attendeeTimeZones.map(tz => ({
+         timeZone: tz,
+         time: meeting.withTimeZone(tz).toString()
+       }));
+     }
+
+     const times = scheduleMeeting(
+       '2024-01-15T14:00:00[America/New_York]',
+       ['America/Los_Angeles', 'Europe/London', 'Asia/Tokyo']
+     );
+
+     console.log(times);
+     // [
+     //   { timeZone: 'America/Los_Angeles', time: '2024-01-15T11:00:00-08:00[America/Los_Angeles]' },
+     //   { timeZone: 'Europe/London', time: '2024-01-15T19:00:00+00:00[Europe/London]' },
+     //   { timeZone: 'Asia/Tokyo', time: '2024-01-16T04:00:00+09:00[Asia/Tokyo]' }
+     // ]
+
+     // 4. Recurring events
+     function getNextOccurrence(monthDay, fromDate) {
+       const target = Temporal.PlainMonthDay.from(monthDay);
+       const current = Temporal.PlainDate.from(fromDate);
+       
+       let next = target.toPlainDate({ year: current.year });
+       if (Temporal.PlainDate.compare(next, current) <= 0) {
+         next = target.toPlainDate({ year: current.year + 1 });
+       }
+       
+       return next;
+     }
+
+     console.log(getNextOccurrence('12-25', '2024-01-15').toString());
+     // "2024-12-25" (next Christmas)
+
+     // 5. Duration formatting
+     function formatDuration(start, end) {
+       const duration = Temporal.Instant.from(start)
+         .until(Temporal.Instant.from(end));
+       
+       const hours = Math.floor(duration.total({ unit: 'hours' }));
+       const minutes = Math.floor(duration.total({ unit: 'minutes' }) % 60);
+       
+       return `${hours}h ${minutes}m`;
+     }
+
+     console.log(formatDuration(
+       '2024-01-15T10:00:00Z',
+       '2024-01-15T13:45:00Z'
+     )); // "3h 45m"
+
+     // 6. Calendar systems
+     const gregorian = Temporal.PlainDate.from('2024-01-15');
+     const islamic = gregorian.withCalendar('islamic');
+     const hebrew = gregorian.withCalendar('hebrew');
+
+     console.log(gregorian.toString()); // "2024-01-15"
+     console.log(islamic.toString()); // "1445-07-04[u-ca=islamic]"
+     console.log(hebrew.toString()); // "5784-10-04[u-ca=hebrew]"
+     ```
+
+     **Comparison with Date:**
+
+     ```javascript
+     // Date (old way)
+     const date = new Date();
+     date.setMonth(date.getMonth() + 1); // Mutates original
+
+     // Temporal (new way)
+     const temporal = Temporal.Now.plainDateISO();
+     const next = temporal.add({ months: 1 }); // Immutable
+
+     // Time zone conversions
+     // Date: Complex and error-prone
+     const dateNY = new Date('2024-01-15T10:00:00');
+     const dateUTC = new Date(dateNY.toISOString());
+     // Messy and unreliable
+
+     // Temporal: Clear and explicit
+     const temporalNY = Temporal.ZonedDateTime.from({
+       timeZone: 'America/New_York',
+       year: 2024, month: 1, day: 15,
+       hour: 10, minute: 0
+     });
+     const temporalUTC = temporalNY.withTimeZone('UTC');
+     ```
+
+     **Current Status and Usage:**
+
+     ```javascript
+     // As of 2026, Temporal is Stage 3 (not yet in browsers by default)
+     // Use with a polyfill:
+     // npm install @js-temporal/polyfill
+
+     import { Temporal } from '@js-temporal/polyfill';
+
+     // Or use in browsers with feature detection:
+     if (typeof Temporal === 'undefined') {
+       // Fall back to Date or load polyfill
+       console.warn('Temporal not supported, using Date');
+     } else {
+       // Use Temporal
+       const date = Temporal.Now.plainDateISO();
+     }
+     ```
+
+     **Benefits of Temporal:**
+
+     1. ✅ **Immutable**: Safer, predictable behavior
+     2. ✅ **Intuitive API**: Months start at 1, not 0
+     3. ✅ **Time Zone Aware**: First-class time zone support
+     4. ✅ **Type Safe**: Different types for different use cases
+     5. ✅ **Calendar Support**: Works with non-Gregorian calendars
+     6. ✅ **Better Arithmetic**: Smart date calculations
+     7. ✅ **ISO 8601**: Native support for standard date format
+     8. ✅ **No Legacy Baggage**: Clean slate, modern design
+
+     **[⬆ Back to Top](#table-of-contents)**
 
 
 <!-- QUESTIONS_END -->
