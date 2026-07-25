@@ -516,6 +516,7 @@
 | 484 | [What are WeakRef and FinalizationRegistry used for?](#what-are-weakref-and-finalizationregistry-used-for) |
 | 485 | [What are logical assignment operators?](#what-are-logical-assignment-operators) |
 | 486 | [What is the Temporal API and why is it proposed as a replacement for Date?](#what-is-the-temporal-api-and-why-is-it-proposed-as-a-replacement-for-date) |
+| 487 | [What is the difference between for loop and forEach](#what-is-the-difference-between-for-loop-and-foreach) |
 <!-- TOC_END -->
 
 <!-- QUESTIONS_START -->
@@ -10918,7 +10919,7 @@ Common use cases and benefits:
      **[⬆ Back to Top](#table-of-contents)**
 
 
-479. ### What is the difference between for loop and forEach
+487. ### What is the difference between for loop and forEach
 
      Both are used to iterate over arrays, but they differ in performance, flexibility, and purpose.
 
