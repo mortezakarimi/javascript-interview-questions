@@ -514,7 +514,7 @@
 | 482 | [What is the Array.prototype.at() method and why is it useful?](#what-is-the-arrayprototypeat-method-and-why-is-it-useful) |
 | 483 | [What is top-level await in JavaScript modules?](#what-is-top-level-await-in-javascript-modules) |
 | 484 | [What are WeakRef and FinalizationRegistry used for?](#what-are-weakref-and-finalizationregistry-used-for) |
-| 485 | [What are logical assignment operators (&&=, ||=, ??=)?](#what-are-logical-assignment-operators) |
+| 485 | [What are logical assignment operators?](#what-are-logical-assignment-operators) |
 | 486 | [What is the Temporal API and why is it proposed as a replacement for Date?](#what-is-the-temporal-api-and-why-is-it-proposed-as-a-replacement-for-date) |
 <!-- TOC_END -->
 
