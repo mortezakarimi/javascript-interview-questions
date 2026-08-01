@@ -517,6 +517,36 @@
 | 485 | [What are logical assignment operators?](#what-are-logical-assignment-operators) |
 | 486 | [What is the Temporal API and why is it proposed as a replacement for Date?](#what-is-the-temporal-api-and-why-is-it-proposed-as-a-replacement-for-date) |
 | 487 | [What is the difference between for loop and forEach](#what-is-the-difference-between-for-loop-and-foreach) |
+| 488 | [What are Symbols and what are their use cases?](#what-are-symbols-and-what-are-their-use-cases) |
+| 489 | [What is the difference between Object.create() and Object.assign()?](#what-is-the-difference-between-objectcreate-and-objectassign) |
+| 490 | [What are generator functions and how do they work?](#what-are-generator-functions-and-how-do-they-work) |
+| 491 | [What is the Reflect API and when should you use it?](#what-is-the-reflect-api-and-when-should-you-use-it) |
+| 492 | [How does JavaScript handle floating point precision issues?](#how-does-javascript-handle-floating-point-precision-issues) |
+| 493 | [What are tagged template literals and their practical uses?](#what-are-tagged-template-literals-and-their-practical-uses) |
+| 494 | [What is the difference between Object.keys(), Object.values(), and Object.entries()?](#what-is-the-difference-between-objectkeys-objectvalues-and-objectentries) |
+| 495 | [What is the Intl.NumberFormat API and how is it used?](#what-is-the-intlnumberformat-api-and-how-is-it-used) |
+| 496 | [How do you implement method chaining in JavaScript?](#how-do-you-implement-method-chaining-in-javascript) |
+| 497 | [What are the differences between Map and Object for storing key-value pairs?](#what-are-the-differences-between-map-and-object-for-storing-key-value-pairs) |
+| 498 | [What is the purpose of Symbol.iterator and how do you use it?](#what-is-the-purpose-of-symboliterator-and-how-do-you-use-it) |
+| 499 | [How does the Intersection Observer API work?](#how-does-the-intersection-observer-api-work) |
+| 500 | [What are async iterators and how are they different from regular iterators?](#what-are-async-iterators-and-how-are-they-different-from-regular-iterators) |
+| 501 | [What is the purpose of Object.getOwnPropertyDescriptors()?](#what-is-the-purpose-of-objectgetownpropertydescriptors) |
+| 502 | [How does Promise.allSettled() differ from Promise.all()?](#how-does-promiseallsettled-differ-from-promiseall) |
+| 503 | [What are the performance implications of using try-catch in JavaScript?](#what-are-the-performance-implications-of-using-try-catch-in-javascript) |
+| 504 | [What is the AbortController API and how is it used?](#what-is-the-abortcontroller-api-and-how-is-it-used) |
+| 505 | [How do you implement a custom error class in JavaScript?](#how-do-you-implement-a-custom-error-class-in-javascript) |
+| 506 | [What is the difference between synchronous and asynchronous generators?](#what-is-the-difference-between-synchronous-and-asynchronous-generators) |
+| 507 | [What are Proxy traps and what operations can they intercept?](#what-are-proxy-traps-and-what-operations-can-they-intercept) |
+| 508 | [How does the Mutation Observer API work?](#how-does-the-mutation-observer-api-work) |
+| 509 | [What is tail call optimization and does JavaScript support it?](#what-is-tail-call-optimization-and-does-javascript-support-it) |
+| 510 | [What are the different ways to handle circular references in JSON?](#what-are-the-different-ways-to-handle-circular-references-in-json) |
+| 511 | [How do you implement a singleton pattern in JavaScript?](#how-do-you-implement-a-singleton-pattern-in-javascript) |
+| 512 | [What is the Performance API and how is it used for measuring performance?](#what-is-the-performance-api-and-how-is-it-used-for-measuring-performance) |
+| 513 | [What are the differences between SharedArrayBuffer and ArrayBuffer?](#what-are-the-differences-between-sharedarraybuffer-and-arraybuffer) |
+| 514 | [How do you prevent prototype pollution attacks in JavaScript?](#how-do-you-prevent-prototype-pollution-attacks-in-javascript) |
+| 515 | [What is the Atomics API and when should it be used?](#what-is-the-atomics-api-and-when-should-it-be-used) |
+| 516 | [How do you implement a lazy loading pattern for modules?](#how-do-you-implement-a-lazy-loading-pattern-for-modules) |
+| 517 | [What are the best practices for optimizing JavaScript bundle size?](#what-are-the-best-practices-for-optimizing-javascript-bundle-size) |
 <!-- TOC_END -->
 
 <!-- QUESTIONS_START -->
@@ -10969,6 +10999,3068 @@ Common use cases and benefits:
       ```
 
      **Note:** The `for` loop is strictly more powerful anything `forEach` does, `for` loop can do too, but not the other way around.
+
+**[⬆ Back to Top](#table-of-contents)**
+
+488. ### What are Symbols and what are their use cases?
+
+     Symbol is a primitive data type introduced in ES6 that creates unique and immutable values. Each Symbol value is guaranteed to be unique, even if they have the same description.
+
+     ```javascript
+     const sym1 = Symbol('description');
+     const sym2 = Symbol('description');
+     console.log(sym1 === sym2); // false
+     ```
+
+     **Common use cases:**
+
+     1. **Creating unique property keys:**
+        ```javascript
+        const id = Symbol('id');
+        const obj = {
+          [id]: 12345,
+          name: 'John'
+        };
+        console.log(obj[id]); // 12345
+        ```
+
+     2. **Preventing property name collisions:**
+        ```javascript
+        const myLib = {
+          [Symbol('internal')]: 'private data',
+          publicMethod() {}
+        };
+        ```
+
+     3. **Implementing well-known symbols (Symbol.iterator, Symbol.toStringTag, etc.):**
+        ```javascript
+        class Collection {
+          *[Symbol.iterator]() {
+            yield 1;
+            yield 2;
+          }
+        }
+        ```
+
+     **Note:** Symbol properties are not enumerable in `for...in` loops or `Object.keys()`, making them useful for metadata and internal object properties.
+
+**[⬆ Back to Top](#table-of-contents)**
+
+489. ### What is the difference between Object.create() and Object.assign()?
+
+     `Object.create()` and `Object.assign()` serve completely different purposes:
+
+     **Object.create()** creates a new object with a specified prototype:
+     ```javascript
+     const proto = { greet() { console.log('Hello'); } };
+     const obj = Object.create(proto);
+     obj.greet(); // 'Hello'
+     console.log(Object.getPrototypeOf(obj) === proto); // true
+     ```
+
+     **Object.assign()** copies properties from source objects to a target object:
+     ```javascript
+     const target = { a: 1 };
+     const source = { b: 2, c: 3 };
+     Object.assign(target, source);
+     console.log(target); // { a: 1, b: 2, c: 3 }
+     ```
+
+     **Key differences:**
+
+     | Object.create() | Object.assign() |
+     |----------------|-----------------|
+     | Creates new object | Modifies existing object |
+     | Sets prototype chain | Copies own properties |
+     | For inheritance | For composition/merging |
+     | Returns new object | Returns modified target |
+
+     ```javascript
+     // Object.create with properties
+     const obj1 = Object.create(proto, {
+       name: { value: 'John', writable: true }
+     });
+
+     // Object.assign with multiple sources
+     const merged = Object.assign({}, source1, source2, source3);
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+490. ### What are generator functions and how do they work?
+
+     Generator functions are special functions that can pause execution and resume later, allowing them to produce a sequence of values over time instead of computing them all at once.
+
+     ```javascript
+     function* numberGenerator() {
+       yield 1;
+       yield 2;
+       yield 3;
+     }
+
+     const gen = numberGenerator();
+     console.log(gen.next()); // { value: 1, done: false }
+     console.log(gen.next()); // { value: 2, done: false }
+     console.log(gen.next()); // { value: 3, done: false }
+     console.log(gen.next()); // { value: undefined, done: true }
+     ```
+
+     **Key features:**
+
+     1. **Lazy evaluation:**
+        ```javascript
+        function* infiniteSequence() {
+          let i = 0;
+          while (true) {
+            yield i++;
+          }
+        }
+        ```
+
+     2. **Two-way communication:**
+        ```javascript
+        function* twoWay() {
+          const x = yield 'First';
+          yield `Got: ${x}`;
+        }
+
+        const gen = twoWay();
+        console.log(gen.next());      // { value: 'First', done: false }
+        console.log(gen.next('data')); // { value: 'Got: data', done: false }
+        ```
+
+     3. **Delegating to other generators:**
+        ```javascript
+        function* gen1() { yield 1; yield 2; }
+        function* gen2() {
+          yield* gen1();
+          yield 3;
+        }
+        ```
+
+     **Practical uses:** iterating large datasets, implementing custom iterators, managing async flows (though async/await is now preferred).
+
+**[⬆ Back to Top](#table-of-contents)**
+
+491. ### What is the Reflect API and when should you use it?
+
+     The Reflect API is a built-in object that provides methods for interceptable JavaScript operations. It mirrors many Object methods but with some improvements.
+
+     ```javascript
+     const obj = { name: 'John', age: 30 };
+
+     // Setting properties
+     Reflect.set(obj, 'city', 'New York');
+
+     // Getting properties
+     console.log(Reflect.get(obj, 'name')); // 'John'
+
+     // Checking property existence
+     console.log(Reflect.has(obj, 'age')); // true
+
+     // Deleting properties
+     Reflect.deleteProperty(obj, 'age');
+     ```
+
+     **Advantages over Object methods:**
+
+     1. **Returns boolean for success/failure:**
+        ```javascript
+        // Object.defineProperty throws on failure
+        try {
+          Object.defineProperty(obj, 'prop', { value: 1 });
+        } catch (e) {}
+
+        // Reflect.defineProperty returns boolean
+        const success = Reflect.defineProperty(obj, 'prop', { value: 1 });
+        ```
+
+     2. **Works perfectly with Proxy traps:**
+        ```javascript
+        const handler = {
+          set(target, prop, value, receiver) {
+            console.log(`Setting ${prop} to ${value}`);
+            return Reflect.set(target, prop, value, receiver);
+          }
+        };
+
+        const proxy = new Proxy({}, handler);
+        proxy.name = 'John'; // Logs: Setting name to John
+        ```
+
+     3. **Function.prototype.apply made simpler:**
+        ```javascript
+        // Old way
+        Function.prototype.apply.call(Math.max, null, [1, 2, 3]);
+
+        // Reflect way
+        Reflect.apply(Math.max, null, [1, 2, 3]); // 3
+        ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+492. ### How does JavaScript handle floating point precision issues?
+
+     JavaScript uses IEEE 754 double-precision (64-bit) floating-point format, which can cause precision issues with decimal numbers.
+
+     ```javascript
+     console.log(0.1 + 0.2); // 0.30000000000000004
+     console.log(0.1 + 0.2 === 0.3); // false
+     ```
+
+     **Solutions:**
+
+     1. **Using epsilon comparison:**
+        ```javascript
+        function areEqual(a, b) {
+          return Math.abs(a - b) < Number.EPSILON;
+        }
+        console.log(areEqual(0.1 + 0.2, 0.3)); // true
+        ```
+
+     2. **Rounding to fixed decimals:**
+        ```javascript
+        const result = Math.round((0.1 + 0.2) * 100) / 100; // 0.3
+        ```
+
+     3. **Using toFixed() or toPrecision():**
+        ```javascript
+        const sum = (0.1 + 0.2).toFixed(2); // "0.30"
+        const num = parseFloat(sum); // 0.3
+        ```
+
+     4. **Working with integers (cents instead of dollars):**
+        ```javascript
+        const price1 = 10; // $0.10 as 10 cents
+        const price2 = 20; // $0.20 as 20 cents
+        const total = price1 + price2; // 30 cents
+        const dollars = total / 100; // $0.30
+        ```
+
+     5. **Using libraries for precise calculations:**
+        ```javascript
+        // decimal.js, big.js, or bignumber.js
+        const Decimal = require('decimal.js');
+        const result = new Decimal(0.1).plus(0.2); // 0.3
+        ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+493. ### What are tagged template literals and their practical uses?
+
+     Tagged template literals allow you to parse template literals with a function, giving you full control over the interpolation process.
+
+     ```javascript
+     function tag(strings, ...values) {
+       console.log(strings); // Array of string literals
+       console.log(values);  // Array of interpolated values
+       return 'processed';
+     }
+
+     const name = 'John';
+     const age = 30;
+     const result = tag`Hello ${name}, you are ${age} years old`;
+     // strings: ['Hello ', ', you are ', ' years old']
+     // values: ['John', 30]
+     ```
+
+     **Practical use cases:**
+
+     1. **HTML escaping for security:**
+        ```javascript
+        function html(strings, ...values) {
+          return strings.reduce((result, str, i) => {
+            const value = values[i - 1];
+            const escaped = String(value)
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+            return result + escaped + str;
+          });
+        }
+
+        const userInput = '<script>alert("XSS")</script>';
+        const safe = html`<div>${userInput}</div>`;
+        ```
+
+     2. **Internationalization (i18n):**
+        ```javascript
+        function i18n(strings, ...values) {
+          // Look up translation for the template
+          return translate(strings, values);
+        }
+
+        const greeting = i18n`Hello ${userName}!`;
+        ```
+
+     3. **SQL query building:**
+        ```javascript
+        function sql(strings, ...values) {
+          // Safely escape values to prevent SQL injection
+          return {
+            text: strings.reduce((query, str, i) => 
+              query + str + (i < values.length ? `$${i + 1}` : ''),
+            ''),
+            values: values
+          };
+        }
+
+        const query = sql`SELECT * FROM users WHERE id = ${userId}`;
+        ```
+
+     4. **Styled-components (CSS-in-JS):**
+        ```javascript
+        const Button = styled.button`
+          background: ${props => props.primary ? 'blue' : 'white'};
+          color: ${props => props.primary ? 'white' : 'blue'};
+        `;
+        ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+494. ### What is the difference between Object.keys(), Object.values(), and Object.entries()?
+
+     These three methods extract different parts of an object's own enumerable properties:
+
+     ```javascript
+     const person = {
+       name: 'John',
+       age: 30,
+       city: 'New York'
+     };
+
+     // Object.keys() - returns array of property names
+     console.log(Object.keys(person));
+     // ['name', 'age', 'city']
+
+     // Object.values() - returns array of property values
+     console.log(Object.values(person));
+     // ['John', 30, 'New York']
+
+     // Object.entries() - returns array of [key, value] pairs
+     console.log(Object.entries(person));
+     // [['name', 'John'], ['age', 30], ['city', 'New York']]
+     ```
+
+     **Common use cases:**
+
+     1. **Object.keys() for iteration:**
+        ```javascript
+        Object.keys(person).forEach(key => {
+          console.log(`${key}: ${person[key]}`);
+        });
+        ```
+
+     2. **Object.values() for value processing:**
+        ```javascript
+        const sum = Object.values({ a: 1, b: 2, c: 3 })
+          .reduce((acc, val) => acc + val, 0); // 6
+        ```
+
+     3. **Object.entries() for Map conversion:**
+        ```javascript
+        const map = new Map(Object.entries(person));
+        
+        // Or converting back from Map to Object
+        const obj = Object.fromEntries(map);
+        ```
+
+     4. **Object.entries() for filtering:**
+        ```javascript
+        const filtered = Object.fromEntries(
+          Object.entries(person).filter(([key, value]) => 
+            typeof value === 'string'
+          )
+        );
+        ```
+
+     **Note:** All three methods only return own, enumerable properties, not inherited ones.
+
+**[⬆ Back to Top](#table-of-contents)**
+
+495. ### What is the Intl.NumberFormat API and how is it used?
+
+     The `Intl.NumberFormat` API provides language-sensitive number formatting, allowing you to format numbers according to locale-specific conventions.
+
+     ```javascript
+     // Basic usage
+     const formatter = new Intl.NumberFormat('en-US');
+     console.log(formatter.format(1234567.89)); // "1,234,567.89"
+
+     // Different locales
+     console.log(new Intl.NumberFormat('de-DE').format(1234567.89));
+     // "1.234.567,89"
+
+     console.log(new Intl.NumberFormat('hi-IN').format(1234567.89));
+     // "12,34,567.89"
+     ```
+
+     **Currency formatting:**
+     ```javascript
+     const usdFormatter = new Intl.NumberFormat('en-US', {
+       style: 'currency',
+       currency: 'USD'
+     });
+     console.log(usdFormatter.format(1234.56)); // "$1,234.56"
+
+     const euroFormatter = new Intl.NumberFormat('de-DE', {
+       style: 'currency',
+       currency: 'EUR'
+     });
+     console.log(euroFormatter.format(1234.56)); // "1.234,56 €"
+     ```
+
+     **Percentage formatting:**
+     ```javascript
+     const percentFormatter = new Intl.NumberFormat('en-US', {
+       style: 'percent',
+       minimumFractionDigits: 2
+     });
+     console.log(percentFormatter.format(0.1234)); // "12.34%"
+     ```
+
+     **Unit formatting:**
+     ```javascript
+     const distanceFormatter = new Intl.NumberFormat('en-US', {
+       style: 'unit',
+       unit: 'kilometer',
+       unitDisplay: 'long'
+     });
+     console.log(distanceFormatter.format(50)); // "50 kilometers"
+     ```
+
+     **Advanced options:**
+     ```javascript
+     const formatter = new Intl.NumberFormat('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+       useGrouping: true
+     });
+     console.log(formatter.format(1234.5)); // "1,234.50"
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+496. ### How do you implement method chaining in JavaScript?
+
+     Method chaining is a pattern where multiple methods are called on the same object sequentially by returning `this` from each method.
+
+     ```javascript
+     class Calculator {
+       constructor(value = 0) {
+         this.value = value;
+       }
+
+       add(num) {
+         this.value += num;
+         return this; // Enable chaining
+       }
+
+       subtract(num) {
+         this.value -= num;
+         return this;
+       }
+
+       multiply(num) {
+         this.value *= num;
+         return this;
+       }
+
+       divide(num) {
+         this.value /= num;
+         return this;
+       }
+
+       getResult() {
+         return this.value;
+       }
+     }
+
+     const result = new Calculator(10)
+       .add(5)
+       .multiply(2)
+       .subtract(3)
+       .getResult();
+
+     console.log(result); // 27
+     ```
+
+     **Advanced pattern with error handling:**
+     ```javascript
+     class QueryBuilder {
+       constructor() {
+         this.query = '';
+         this.params = [];
+       }
+
+       select(...fields) {
+         this.query = `SELECT ${fields.join(', ')}`;
+         return this;
+       }
+
+       from(table) {
+         this.query += ` FROM ${table}`;
+         return this;
+       }
+
+       where(condition, ...params) {
+         this.query += ` WHERE ${condition}`;
+         this.params.push(...params);
+         return this;
+       }
+
+       build() {
+         return { query: this.query, params: this.params };
+       }
+     }
+
+     const query = new QueryBuilder()
+       .select('id', 'name', 'email')
+       .from('users')
+       .where('age > ?', 18)
+       .build();
+     ```
+
+     **Immutable chaining pattern:**
+     ```javascript
+     class ImmutableArray {
+       constructor(arr = []) {
+         this.arr = arr;
+       }
+
+       map(fn) {
+         return new ImmutableArray(this.arr.map(fn));
+       }
+
+       filter(fn) {
+         return new ImmutableArray(this.arr.filter(fn));
+       }
+
+       value() {
+         return this.arr;
+       }
+     }
+
+     const result = new ImmutableArray([1, 2, 3, 4])
+       .map(x => x * 2)
+       .filter(x => x > 4)
+       .value(); // [6, 8]
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+497. ### What are the differences between Map and Object for storing key-value pairs?
+
+     While both Map and Object store key-value pairs, they have significant differences:
+
+     **Key types:**
+     ```javascript
+     // Object - keys are always strings or symbols
+     const obj = {};
+     obj[1] = 'one';
+     console.log(Object.keys(obj)); // ['1'] - converted to string
+
+     // Map - keys can be any type
+     const map = new Map();
+     map.set(1, 'one');
+     map.set({}, 'object');
+     map.set(() => {}, 'function');
+     ```
+
+     **Size property:**
+     ```javascript
+     const map = new Map([['a', 1], ['b', 2]]);
+     console.log(map.size); // 2
+
+     const obj = { a: 1, b: 2 };
+     console.log(Object.keys(obj).length); // Manual counting
+     ```
+
+     **Iteration:**
+     ```javascript
+     const map = new Map([['a', 1], ['b', 2]]);
+
+     // Map is directly iterable
+     for (const [key, value] of map) {
+       console.log(key, value);
+     }
+
+     // Object requires Object.entries()
+     for (const [key, value] of Object.entries(obj)) {
+       console.log(key, value);
+     }
+     ```
+
+     **Comparison table:**
+
+     | Feature | Map | Object |
+     |---------|-----|--------|
+     | Key types | Any type | String/Symbol only |
+     | Size | `map.size` | `Object.keys(obj).length` |
+     | Iteration | Direct iteration | Requires conversion |
+     | Order | Insertion order guaranteed | Not guaranteed (pre-ES2015) |
+     | Performance | Better for frequent additions/deletions | Better for simple lookups |
+     | Prototype | No prototype pollution risk | Has prototype chain |
+     | JSON support | No direct support | Native support |
+
+     **When to use Map:**
+     ```javascript
+     // Frequent additions and deletions
+     const cache = new Map();
+     cache.set(key1, value1);
+     cache.delete(key1);
+
+     // Non-string keys
+     const weakMap = new Map();
+     const domElement = document.getElementById('btn');
+     weakMap.set(domElement, { clicks: 0 });
+     ```
+
+     **When to use Object:**
+     ```javascript
+     // Simple data structures
+     const config = {
+       apiUrl: 'https://api.example.com',
+       timeout: 5000
+     };
+
+     // JSON serialization needed
+     const data = { name: 'John', age: 30 };
+     JSON.stringify(data);
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+498. ### What is the purpose of Symbol.iterator and how do you use it?
+
+     `Symbol.iterator` is a well-known symbol that specifies the default iterator for an object, making it iterable with `for...of` loops and spread operators.
+
+     ```javascript
+     // Built-in iterables use Symbol.iterator
+     const arr = [1, 2, 3];
+     const iterator = arr[Symbol.iterator]();
+
+     console.log(iterator.next()); // { value: 1, done: false }
+     console.log(iterator.next()); // { value: 2, done: false }
+     console.log(iterator.next()); // { value: 3, done: false }
+     console.log(iterator.next()); // { value: undefined, done: true }
+     ```
+
+     **Creating custom iterables:**
+     ```javascript
+     class Range {
+       constructor(start, end) {
+         this.start = start;
+         this.end = end;
+       }
+
+       [Symbol.iterator]() {
+         let current = this.start;
+         const end = this.end;
+
+         return {
+           next() {
+             if (current <= end) {
+               return { value: current++, done: false };
+             }
+             return { done: true };
+           }
+         };
+       }
+     }
+
+     const range = new Range(1, 5);
+     for (const num of range) {
+       console.log(num); // 1, 2, 3, 4, 5
+     }
+
+     console.log([...range]); // [1, 2, 3, 4, 5]
+     ```
+
+     **Using generator function:**
+     ```javascript
+     class Countdown {
+       constructor(start) {
+         this.start = start;
+       }
+
+       *[Symbol.iterator]() {
+         for (let i = this.start; i >= 0; i--) {
+           yield i;
+         }
+       }
+     }
+
+     const countdown = new Countdown(5);
+     console.log([...countdown]); // [5, 4, 3, 2, 1, 0]
+     ```
+
+     **Practical example - infinite sequence:**
+     ```javascript
+     const fibonacci = {
+       [Symbol.iterator]() {
+         let prev = 0, curr = 1;
+         return {
+           next() {
+             [prev, curr] = [curr, prev + curr];
+             return { value: prev, done: false };
+           }
+         };
+       }
+     };
+
+     // Get first 10 fibonacci numbers
+     const fib10 = [];
+     for (const num of fibonacci) {
+       fib10.push(num);
+       if (fib10.length === 10) break;
+     }
+     console.log(fib10); // [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+499. ### How does the Intersection Observer API work?
+
+     The Intersection Observer API provides a way to asynchronously observe changes in the intersection of a target element with an ancestor element or the viewport.
+
+     **Basic usage:**
+     ```javascript
+     const observer = new IntersectionObserver((entries) => {
+       entries.forEach(entry => {
+         if (entry.isIntersecting) {
+           console.log('Element is visible');
+           entry.target.classList.add('visible');
+         } else {
+           console.log('Element is not visible');
+         }
+       });
+     });
+
+     const target = document.querySelector('.observe-me');
+     observer.observe(target);
+     ```
+
+     **Lazy loading images:**
+     ```javascript
+     const imageObserver = new IntersectionObserver((entries, observer) => {
+       entries.forEach(entry => {
+         if (entry.isIntersecting) {
+           const img = entry.target;
+           img.src = img.dataset.src;
+           img.classList.add('loaded');
+           observer.unobserve(img); // Stop observing after loading
+         }
+       });
+     });
+
+     document.querySelectorAll('img[data-src]').forEach(img => {
+       imageObserver.observe(img);
+     });
+     ```
+
+     **Infinite scrolling:**
+     ```javascript
+     const infiniteScroll = new IntersectionObserver((entries) => {
+       entries.forEach(entry => {
+         if (entry.isIntersecting) {
+           loadMoreContent();
+         }
+       });
+     }, {
+       rootMargin: '100px' // Trigger 100px before reaching the element
+     });
+
+     const sentinel = document.querySelector('.load-more-trigger');
+     infiniteScroll.observe(sentinel);
+     ```
+
+     **Options:**
+     ```javascript
+     const options = {
+       root: null, // viewport (default)
+       rootMargin: '0px 0px -100px 0px', // Shrink observation area
+       threshold: [0, 0.25, 0.5, 0.75, 1] // Trigger at multiple visibility levels
+     };
+
+     const observer = new IntersectionObserver((entries) => {
+       entries.forEach(entry => {
+         console.log(`Visibility: ${entry.intersectionRatio * 100}%`);
+       });
+     }, options);
+     ```
+
+     **Tracking visibility time:**
+     ```javascript
+     let visibilityStartTime;
+
+     const visibilityObserver = new IntersectionObserver((entries) => {
+       entries.forEach(entry => {
+         if (entry.isIntersecting) {
+           visibilityStartTime = Date.now();
+         } else if (visibilityStartTime) {
+           const visibilityDuration = Date.now() - visibilityStartTime;
+           console.log(`Element was visible for ${visibilityDuration}ms`);
+           visibilityStartTime = null;
+         }
+       });
+     });
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+500. ### What are async iterators and how are they different from regular iterators?
+
+     Async iterators allow you to iterate over asynchronous data sources using `for await...of` loops, where each iteration can wait for a Promise to resolve.
+
+     **Regular iterator (synchronous):**
+     ```javascript
+     const syncIterable = {
+       [Symbol.iterator]() {
+         let i = 0;
+         return {
+           next() {
+             if (i < 3) {
+               return { value: i++, done: false };
+             }
+             return { done: true };
+           }
+         };
+       }
+     };
+
+     for (const val of syncIterable) {
+       console.log(val); // 0, 1, 2
+     }
+     ```
+
+     **Async iterator:**
+     ```javascript
+     const asyncIterable = {
+       [Symbol.asyncIterator]() {
+         let i = 0;
+         return {
+           async next() {
+             if (i < 3) {
+               await new Promise(resolve => setTimeout(resolve, 1000));
+               return { value: i++, done: false };
+             }
+             return { done: true };
+           }
+         };
+       }
+     };
+
+     (async () => {
+       for await (const val of asyncIterable) {
+         console.log(val); // 0, 1, 2 (one per second)
+       }
+     })();
+     ```
+
+     **Async generator function:**
+     ```javascript
+     async function* fetchPages(urls) {
+       for (const url of urls) {
+         const response = await fetch(url);
+         const data = await response.json();
+         yield data;
+       }
+     }
+
+     (async () => {
+       const urls = ['api/page1', 'api/page2', 'api/page3'];
+       for await (const page of fetchPages(urls)) {
+         console.log(page);
+       }
+     })();
+     ```
+
+     **Practical example - reading file streams:**
+     ```javascript
+     async function* readLines(filePath) {
+       const fileStream = fs.createReadStream(filePath);
+       const rl = readline.createInterface({
+         input: fileStream,
+         crlfDelay: Infinity
+       });
+
+       for await (const line of rl) {
+         yield line;
+       }
+     }
+
+     (async () => {
+       for await (const line of readLines('large-file.txt')) {
+         console.log(line);
+       }
+     })();
+     ```
+
+     **Key differences:**
+
+     | Regular Iterator | Async Iterator |
+     |-----------------|----------------|
+     | Returns `{ value, done }` | Returns `Promise<{ value, done }>` |
+     | `Symbol.iterator` | `Symbol.asyncIterator` |
+     | Used with `for...of` | Used with `for await...of` |
+     | Synchronous | Asynchronous |
+     | `next()` method | `async next()` method |
+
+**[⬆ Back to Top](#table-of-contents)**
+
+501. ### What is the purpose of Object.getOwnPropertyDescriptors()?
+
+     `Object.getOwnPropertyDescriptors()` returns all own property descriptors of an object, including their attributes (value, writable, enumerable, configurable, get, set).
+
+     ```javascript
+     const obj = {
+       name: 'John',
+       get fullName() {
+         return this.name;
+       }
+     };
+
+     const descriptors = Object.getOwnPropertyDescriptors(obj);
+     console.log(descriptors);
+     /*
+     {
+       name: {
+         value: 'John',
+         writable: true,
+         enumerable: true,
+         configurable: true
+       },
+       fullName: {
+         get: [Function: get fullName],
+         set: undefined,
+         enumerable: true,
+         configurable: true
+       }
+     }
+     */
+     ```
+
+     **Use case 1: Shallow cloning with all property attributes:**
+     ```javascript
+     // Regular spread operator loses getters/setters
+     const clone1 = { ...obj };
+
+     // Using Object.assign also loses getters/setters
+     const clone2 = Object.assign({}, obj);
+
+     // Proper cloning with descriptors
+     const properClone = Object.create(
+       Object.getPrototypeOf(obj),
+       Object.getOwnPropertyDescriptors(obj)
+     );
+     ```
+
+     **Use case 2: Mixin pattern preserving all attributes:**
+     ```javascript
+     function mixin(target, ...sources) {
+       for (const source of sources) {
+         Object.defineProperties(
+           target,
+           Object.getOwnPropertyDescriptors(source)
+         );
+       }
+       return target;
+     }
+
+     const obj1 = {
+       get prop() { return 'getter'; }
+     };
+
+     const obj2 = {};
+     mixin(obj2, obj1);
+     console.log(obj2.prop); // 'getter'
+     ```
+
+     **Use case 3: Inspecting property configuration:**
+     ```javascript
+     const obj = {};
+     Object.defineProperty(obj, 'readOnly', {
+       value: 42,
+       writable: false
+     });
+
+     const descriptor = Object.getOwnPropertyDescriptors(obj).readOnly;
+     console.log(descriptor.writable); // false
+     ```
+
+     **Comparison with Object.getOwnPropertyDescriptor():**
+     ```javascript
+     // Single property
+     const singleDesc = Object.getOwnPropertyDescriptor(obj, 'name');
+
+     // All properties
+     const allDescs = Object.getOwnPropertyDescriptors(obj);
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+502. ### How does Promise.allSettled() differ from Promise.all()?
+
+     `Promise.allSettled()` and `Promise.all()` both handle multiple promises, but they behave differently when promises are rejected.
+
+     **Promise.all() - fails fast:**
+     ```javascript
+     const promises = [
+       Promise.resolve(1),
+       Promise.reject('Error'),
+       Promise.resolve(3)
+     ];
+
+     Promise.all(promises)
+       .then(results => console.log(results))
+       .catch(error => console.log(error)); // 'Error'
+     // Stops at first rejection
+     ```
+
+     **Promise.allSettled() - waits for all:**
+     ```javascript
+     Promise.allSettled(promises)
+       .then(results => console.log(results));
+     /*
+     [
+       { status: 'fulfilled', value: 1 },
+       { status: 'rejected', reason: 'Error' },
+       { status: 'fulfilled', value: 3 }
+     ]
+     */
+     ```
+
+     **Practical example - multiple API calls:**
+     ```javascript
+     async function fetchUserData(userId) {
+       const endpoints = [
+         fetch(`/api/users/${userId}`),
+         fetch(`/api/users/${userId}/posts`),
+         fetch(`/api/users/${userId}/comments`)
+       ];
+
+       const results = await Promise.allSettled(endpoints);
+
+       return {
+         profile: results[0].status === 'fulfilled' 
+           ? await results[0].value.json() 
+           : null,
+         posts: results[1].status === 'fulfilled' 
+           ? await results[1].value.json() 
+           : [],
+         comments: results[2].status === 'fulfilled' 
+           ? await results[2].value.json() 
+           : []
+       };
+     }
+     ```
+
+     **Filtering settled results:**
+     ```javascript
+     const results = await Promise.allSettled(promises);
+
+     const successful = results
+       .filter(r => r.status === 'fulfilled')
+       .map(r => r.value);
+
+     const failed = results
+       .filter(r => r.status === 'rejected')
+       .map(r => r.reason);
+
+     console.log(`${successful.length} succeeded, ${failed.length} failed`);
+     ```
+
+     **When to use each:**
+
+     | Use Promise.all() when: | Use Promise.allSettled() when: |
+     |------------------------|-------------------------------|
+     | All promises must succeed | You need all results regardless of status |
+     | Failure should stop execution | You want to handle each result independently |
+     | You want to fail fast | You need a complete report |
+
+**[⬆ Back to Top](#table-of-contents)**
+
+503. ### What are the performance implications of using try-catch in JavaScript?
+
+     Try-catch blocks have performance implications, especially when used in hot code paths or when exceptions are frequently thrown.
+
+     **Performance impact:**
+     ```javascript
+     // Slower - try-catch in a tight loop
+     function sumWithTryCatch(arr) {
+       let sum = 0;
+       for (let i = 0; i < arr.length; i++) {
+         try {
+           sum += arr[i];
+         } catch (e) {
+           // Handle error
+         }
+       }
+       return sum;
+     }
+
+     // Faster - try-catch outside the loop
+     function sumOptimized(arr) {
+       let sum = 0;
+       try {
+         for (let i = 0; i < arr.length; i++) {
+           sum += arr[i];
+         }
+       } catch (e) {
+         // Handle error
+       }
+       return sum;
+     }
+     ```
+
+     **De-optimization issues:**
+     ```javascript
+     // This function may not be optimized by V8
+     function deoptimized() {
+       try {
+         // Code here
+       } catch (e) {
+         // Accessing 'e' can prevent optimizations
+         console.log(e);
+       }
+     }
+
+     // Better approach
+     function optimized() {
+       try {
+         // Code here
+       } catch (e) {
+         handleError(e); // Move to separate function
+       }
+     }
+
+     function handleError(error) {
+       console.log(error);
+     }
+     ```
+
+     **Best practices:**
+
+     1. **Use validation instead of try-catch when possible:**
+        ```javascript
+        // Avoid
+        try {
+          const value = obj.prop.nested.value;
+        } catch (e) {
+          // Handle error
+        }
+
+        // Prefer
+        const value = obj?.prop?.nested?.value;
+        ```
+
+     2. **Minimize try-catch scope:**
+        ```javascript
+        // Bad - wrapping too much
+        try {
+          const data = fetchData();
+          const processed = processData(data);
+          const validated = validateData(processed);
+          saveData(validated);
+        } catch (e) {}
+
+        // Good - only wrap risky operations
+        const data = fetchData();
+        const processed = processData(data);
+        const validated = validateData(processed);
+        try {
+          saveData(validated);
+        } catch (e) {
+          handleSaveError(e);
+        }
+        ```
+
+     3. **Avoid using exceptions for flow control:**
+        ```javascript
+        // Bad - using exceptions for control flow
+        function findUser(id) {
+          try {
+            return users[id];
+          } catch {
+            return null;
+          }
+        }
+
+        // Good - use conditional logic
+        function findUser(id) {
+          return users[id] || null;
+        }
+        ```
+
+     **Note:** Modern JavaScript engines have improved try-catch performance significantly, but it's still important to use them judiciously in performance-critical code.
+
+**[⬆ Back to Top](#table-of-contents)**
+
+504. ### What is the AbortController API and how is it used?
+
+     The AbortController API provides a way to abort one or more asynchronous operations, particularly useful for canceling fetch requests.
+
+     **Basic usage:**
+     ```javascript
+     const controller = new AbortController();
+     const signal = controller.signal;
+
+     fetch('https://api.example.com/data', { signal })
+       .then(response => response.json())
+       .then(data => console.log(data))
+       .catch(err => {
+         if (err.name === 'AbortError') {
+           console.log('Fetch aborted');
+         }
+       });
+
+     // Cancel the request
+     controller.abort();
+     ```
+
+     **Timeout implementation:**
+     ```javascript
+     function fetchWithTimeout(url, timeout = 5000) {
+       const controller = new AbortController();
+       const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+       return fetch(url, { signal: controller.signal })
+         .then(response => {
+           clearTimeout(timeoutId);
+           return response;
+         })
+         .catch(err => {
+           clearTimeout(timeoutId);
+           if (err.name === 'AbortError') {
+             throw new Error('Request timed out');
+           }
+           throw err;
+         });
+     }
+
+     fetchWithTimeout('https://api.example.com/slow-endpoint', 3000);
+     ```
+
+     **Canceling multiple requests:**
+     ```javascript
+     const controller = new AbortController();
+     const signal = controller.signal;
+
+     Promise.all([
+       fetch('/api/users', { signal }),
+       fetch('/api/posts', { signal }),
+       fetch('/api/comments', { signal })
+     ]).catch(err => {
+       if (err.name === 'AbortError') {
+         console.log('All requests aborted');
+       }
+     });
+
+     // Cancel all requests
+     controller.abort();
+     ```
+
+     **React component example:**
+     ```javascript
+     useEffect(() => {
+       const controller = new AbortController();
+
+       async function fetchData() {
+         try {
+           const response = await fetch('/api/data', {
+             signal: controller.signal
+           });
+           const data = await response.json();
+           setData(data);
+         } catch (err) {
+           if (err.name !== 'AbortError') {
+             setError(err);
+           }
+         }
+       }
+
+       fetchData();
+
+       // Cleanup: abort on unmount
+       return () => controller.abort();
+     }, []);
+     ```
+
+     **Custom abortable operations:**
+     ```javascript
+     function abortablePromise(promise, signal) {
+       return new Promise((resolve, reject) => {
+         signal.addEventListener('abort', () => {
+           reject(new DOMException('Aborted', 'AbortError'));
+         });
+
+         promise.then(resolve, reject);
+       });
+     }
+
+     const controller = new AbortController();
+     abortablePromise(
+       new Promise(resolve => setTimeout(resolve, 5000)),
+       controller.signal
+     ).catch(err => console.log(err.name)); // 'AbortError'
+
+     controller.abort();
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+505. ### How do you implement a custom error class in JavaScript?
+
+     Custom error classes allow you to create specific error types with additional properties and methods, making error handling more precise.
+
+     **Basic custom error:**
+     ```javascript
+     class CustomError extends Error {
+       constructor(message) {
+         super(message);
+         this.name = 'CustomError';
+       }
+     }
+
+     throw new CustomError('Something went wrong');
+     ```
+
+     **Error with additional properties:**
+     ```javascript
+     class ValidationError extends Error {
+       constructor(message, field) {
+         super(message);
+         this.name = 'ValidationError';
+         this.field = field;
+         this.timestamp = new Date();
+       }
+     }
+
+     try {
+       throw new ValidationError('Invalid email', 'email');
+     } catch (error) {
+       if (error instanceof ValidationError) {
+         console.log(`${error.field}: ${error.message}`);
+         // email: Invalid email
+       }
+     }
+     ```
+
+     **HTTP error class:**
+     ```javascript
+     class HTTPError extends Error {
+       constructor(message, status, response) {
+         super(message);
+         this.name = 'HTTPError';
+         this.status = status;
+         this.response = response;
+       }
+
+       get isClientError() {
+         return this.status >= 400 && this.status < 500;
+       }
+
+       get isServerError() {
+         return this.status >= 500;
+       }
+     }
+
+     async function fetchData(url) {
+       const response = await fetch(url);
+       if (!response.ok) {
+         throw new HTTPError(
+           'Failed to fetch',
+           response.status,
+           await response.json()
+         );
+       }
+       return response.json();
+     }
+
+     try {
+       await fetchData('/api/users');
+     } catch (error) {
+       if (error instanceof HTTPError && error.isClientError) {
+         console.log('Client error:', error.message);
+       }
+     }
+     ```
+
+     **Error factory pattern:**
+     ```javascript
+     class AppError extends Error {
+       constructor(message, code, metadata = {}) {
+         super(message);
+         this.name = 'AppError';
+         this.code = code;
+         this.metadata = metadata;
+       }
+
+       static badRequest(message, metadata) {
+         return new AppError(message, 'BAD_REQUEST', metadata);
+       }
+
+       static notFound(resource) {
+         return new AppError(
+           `${resource} not found`,
+           'NOT_FOUND',
+           { resource }
+         );
+       }
+
+       static unauthorized(message) {
+         return new AppError(message, 'UNAUTHORIZED');
+       }
+     }
+
+     throw AppError.notFound('User');
+     throw AppError.badRequest('Invalid input', { field: 'email' });
+     ```
+
+     **Error with stack trace customization:**
+     ```javascript
+     class DatabaseError extends Error {
+       constructor(message, query) {
+         super(message);
+         this.name = 'DatabaseError';
+         this.query = query;
+
+         // Maintain proper stack trace
+         if (Error.captureStackTrace) {
+           Error.captureStackTrace(this, DatabaseError);
+         }
+       }
+     }
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+506. ### What is the difference between synchronous and asynchronous generators?
+
+     Synchronous and asynchronous generators differ in how they produce values and handle asynchronous operations.
+
+     **Synchronous generator:**
+     ```javascript
+     function* syncGenerator() {
+       yield 1;
+       yield 2;
+       yield 3;
+     }
+
+     const gen = syncGenerator();
+     console.log(gen.next()); // { value: 1, done: false }
+     console.log(gen.next()); // { value: 2, done: false }
+     ```
+
+     **Asynchronous generator:**
+     ```javascript
+     async function* asyncGenerator() {
+       yield await Promise.resolve(1);
+       yield await Promise.resolve(2);
+       yield await Promise.resolve(3);
+     }
+
+     (async () => {
+       for await (const value of asyncGenerator()) {
+         console.log(value); // 1, 2, 3
+       }
+     })();
+     ```
+
+     **Comparison:**
+
+     | Synchronous Generator | Asynchronous Generator |
+     |----------------------|------------------------|
+     | `function*` | `async function*` |
+     | Returns iterator | Returns async iterator |
+     | `.next()` returns `{ value, done }` | `.next()` returns `Promise<{ value, done }>` |
+     | Used with `for...of` | Used with `for await...of` |
+     | Cannot await inside | Can await inside |
+
+     **Practical example - data streaming:**
+     ```javascript
+     // Sync generator - in-memory data
+     function* readFileSync(lines) {
+       for (const line of lines) {
+         yield line;
+       }
+     }
+
+     // Async generator - streaming data
+     async function* readFileAsync(filePath) {
+       const stream = createReadStream(filePath);
+       const reader = stream.getReader();
+
+       while (true) {
+         const { done, value } = await reader.read();
+         if (done) break;
+         yield value;
+       }
+     }
+     ```
+
+     **Async generator with delays:**
+     ```javascript
+     async function* ticker(interval, max) {
+       let count = 0;
+       while (count < max) {
+         await new Promise(resolve => setTimeout(resolve, interval));
+         yield count++;
+       }
+     }
+
+     (async () => {
+       for await (const tick of ticker(1000, 5)) {
+         console.log(tick); // 0, 1, 2, 3, 4 (one per second)
+       }
+     })();
+     ```
+
+     **Combining generators:**
+     ```javascript
+     async function* fetchPages(urls) {
+       for (const url of urls) {
+         const response = await fetch(url);
+         yield await response.json();
+       }
+     }
+
+     async function* processPages(urls) {
+       for await (const page of fetchPages(urls)) {
+         yield processPage(page);
+       }
+     }
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+507. ### What are Proxy traps and what operations can they intercept?
+
+     Proxy traps are handler methods that intercept fundamental operations on objects, allowing you to customize their behavior.
+
+     **Available traps:**
+     ```javascript
+     const handler = {
+       // Property access
+       get(target, prop, receiver) {
+         console.log(`Getting ${prop}`);
+         return Reflect.get(target, prop, receiver);
+       },
+
+       // Property assignment
+       set(target, prop, value, receiver) {
+         console.log(`Setting ${prop} to ${value}`);
+         return Reflect.set(target, prop, value, receiver);
+       },
+
+       // Property deletion
+       deleteProperty(target, prop) {
+         console.log(`Deleting ${prop}`);
+         return Reflect.deleteProperty(target, prop);
+       },
+
+       // 'in' operator
+       has(target, prop) {
+         console.log(`Checking ${prop}`);
+         return Reflect.has(target, prop);
+       },
+
+       // Object.keys, for...in
+       ownKeys(target) {
+         return Reflect.ownKeys(target);
+       },
+
+       // Function calls
+       apply(target, thisArg, args) {
+         console.log(`Called with ${args}`);
+         return Reflect.apply(target, thisArg, args);
+       },
+
+       // new operator
+       construct(target, args) {
+         console.log(`Constructed with ${args}`);
+         return Reflect.construct(target, args);
+       },
+
+       // Object.getPrototypeOf
+       getPrototypeOf(target) {
+         return Reflect.getPrototypeOf(target);
+       },
+
+       // Object.setPrototypeOf
+       setPrototypeOf(target, proto) {
+         return Reflect.setPrototypeOf(target, proto);
+       },
+
+       // Object.isExtensible
+       isExtensible(target) {
+         return Reflect.isExtensible(target);
+       },
+
+       // Object.preventExtensions
+       preventExtensions(target) {
+         return Reflect.preventExtensions(target);
+       },
+
+       // Object.getOwnPropertyDescriptor
+       getOwnPropertyDescriptor(target, prop) {
+         return Reflect.getOwnPropertyDescriptor(target, prop);
+       },
+
+       // Object.defineProperty
+       defineProperty(target, prop, descriptor) {
+         return Reflect.defineProperty(target, prop, descriptor);
+       }
+     };
+     ```
+
+     **Validation example:**
+     ```javascript
+     const validator = {
+       set(target, prop, value) {
+         if (prop === 'age') {
+           if (typeof value !== 'number' || value < 0) {
+             throw new TypeError('Age must be a positive number');
+           }
+         }
+         target[prop] = value;
+         return true;
+       }
+     };
+
+     const person = new Proxy({}, validator);
+     person.age = 30; // OK
+     // person.age = -5; // Throws error
+     ```
+
+     **Property access logging:**
+     ```javascript
+     function createLoggingProxy(obj, name = 'object') {
+       return new Proxy(obj, {
+         get(target, prop) {
+           console.log(`${name}.${String(prop)} accessed`);
+           const value = target[prop];
+           if (typeof value === 'object' && value !== null) {
+             return createLoggingProxy(value, `${name}.${String(prop)}`);
+           }
+           return value;
+         }
+       });
+     }
+
+     const user = createLoggingProxy({ name: 'John', address: { city: 'NYC' } });
+     user.address.city; // Logs: object.address accessed, object.address.city accessed
+     ```
+
+     **Negative array indices:**
+     ```javascript
+     function createArray(arr) {
+       return new Proxy(arr, {
+         get(target, prop) {
+           const index = Number(prop);
+           if (index < 0) {
+             return target[target.length + index];
+           }
+           return target[prop];
+         }
+       });
+     }
+
+     const arr = createArray([1, 2, 3, 4, 5]);
+     console.log(arr[-1]); // 5
+     console.log(arr[-2]); // 4
+     ```
+
+     **Function argument validation:**
+     ```javascript
+     function validateArgs(fn, validators) {
+       return new Proxy(fn, {
+         apply(target, thisArg, args) {
+           validators.forEach((validator, i) => {
+             if (!validator(args[i])) {
+               throw new Error(`Invalid argument at position ${i}`);
+             }
+           });
+           return Reflect.apply(target, thisArg, args);
+         }
+       });
+     }
+
+     const add = validateArgs(
+       (a, b) => a + b,
+       [
+         x => typeof x === 'number',
+         x => typeof x === 'number'
+       ]
+     );
+
+     console.log(add(1, 2)); // 3
+     // add('1', 2); // Throws error
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+508. ### How does the Mutation Observer API work?
+
+     The MutationObserver API provides a way to watch for changes to the DOM tree, replacing the deprecated mutation events.
+
+     **Basic usage:**
+     ```javascript
+     const observer = new MutationObserver((mutations) => {
+       mutations.forEach(mutation => {
+         console.log('Type:', mutation.type);
+         console.log('Target:', mutation.target);
+       });
+     });
+
+     const config = {
+       attributes: true,
+       childList: true,
+       subtree: true
+     };
+
+     const targetNode = document.getElementById('observed');
+     observer.observe(targetNode, config);
+
+     // Later: stop observing
+     observer.disconnect();
+     ```
+
+     **Observing attribute changes:**
+     ```javascript
+     const observer = new MutationObserver((mutations) => {
+       mutations.forEach(mutation => {
+         if (mutation.type === 'attributes') {
+           const oldValue = mutation.oldValue;
+           const newValue = mutation.target.getAttribute(mutation.attributeName);
+           console.log(`${mutation.attributeName}: ${oldValue} → ${newValue}`);
+         }
+       });
+     });
+
+     observer.observe(element, {
+       attributes: true,
+       attributeOldValue: true,
+       attributeFilter: ['class', 'data-status']
+     });
+     ```
+
+     **Observing child nodes:**
+     ```javascript
+     const observer = new MutationObserver((mutations) => {
+       mutations.forEach(mutation => {
+         mutation.addedNodes.forEach(node => {
+           console.log('Added:', node);
+         });
+         mutation.removedNodes.forEach(node => {
+           console.log('Removed:', node);
+         });
+       });
+     });
+
+     observer.observe(container, {
+       childList: true,
+       subtree: true
+     });
+     ```
+
+     **Practical example - lazy loading images when added to DOM:**
+     ```javascript
+     const imageObserver = new MutationObserver((mutations) => {
+       mutations.forEach(mutation => {
+         mutation.addedNodes.forEach(node => {
+           if (node.tagName === 'IMG' && node.dataset.src) {
+             loadImage(node);
+           }
+           // Check descendants
+           if (node.querySelectorAll) {
+             node.querySelectorAll('img[data-src]').forEach(loadImage);
+           }
+         });
+       });
+     });
+
+     function loadImage(img) {
+       img.src = img.dataset.src;
+       delete img.dataset.src;
+     }
+
+     imageObserver.observe(document.body, {
+       childList: true,
+       subtree: true
+     });
+     ```
+
+     **Observing text content changes:**
+     ```javascript
+     const observer = new MutationObserver((mutations) => {
+       mutations.forEach(mutation => {
+         if (mutation.type === 'characterData') {
+           console.log('Text changed:', mutation.target.textContent);
+         }
+       });
+     });
+
+     observer.observe(textNode, {
+       characterData: true,
+       characterDataOldValue: true
+     });
+     ```
+
+     **Configuration options:**
+     ```javascript
+     const config = {
+       attributes: true,           // Watch attribute changes
+       attributeOldValue: true,    // Record old attribute values
+       attributeFilter: ['class'], // Only watch specific attributes
+       childList: true,            // Watch child nodes
+       subtree: true,              // Watch all descendants
+       characterData: true,        // Watch text content
+       characterDataOldValue: true // Record old text content
+     };
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+509. ### What is tail call optimization and does JavaScript support it?
+
+     Tail call optimization (TCO) is a technique where a function call in tail position (the last operation before returning) reuses the current stack frame instead of creating a new one, preventing stack overflow in recursive functions.
+
+     **Tail call example:**
+     ```javascript
+     // Tail call - last operation is the recursive call
+     function factorial(n, acc = 1) {
+       if (n <= 1) return acc;
+       return factorial(n - 1, n * acc); // Tail call
+     }
+
+     // Not a tail call - multiplication happens after the recursive call
+     function factorialNonTail(n) {
+       if (n <= 1) return 1;
+       return n * factorialNonTail(n - 1); // NOT a tail call
+     }
+     ```
+
+     **JavaScript TCO support:**
+     - Specified in ES6 (ES2015) but **poorly supported**
+     - Only Safari/JavaScriptCore implements it
+     - Chrome V8 and Firefox SpiderMonkey do not support it
+     - Most JavaScript engines ignore TCO
+
+     **Workaround - trampolining:**
+     ```javascript
+     function trampoline(fn) {
+       while (typeof fn === 'function') {
+         fn = fn();
+       }
+       return fn;
+     }
+
+     function factorial(n, acc = 1) {
+       if (n <= 1) return acc;
+       return () => factorial(n - 1, n * acc);
+     }
+
+     const result = trampoline(() => factorial(100000)); // Won't stack overflow
+     ```
+
+     **Workaround - iteration instead of recursion:**
+     ```javascript
+     // Recursive (can cause stack overflow)
+     function sumRecursive(arr, index = 0, acc = 0) {
+       if (index >= arr.length) return acc;
+       return sumRecursive(arr, index + 1, acc + arr[index]);
+     }
+
+     // Iterative (safe)
+     function sumIterative(arr) {
+       let sum = 0;
+       for (const num of arr) {
+         sum += num;
+       }
+       return sum;
+     }
+     ```
+
+     **Checking for TCO:**
+     ```javascript
+     function checkTCO(n) {
+       if (n === 0) return true;
+       return checkTCO(n - 1);
+     }
+
+     try {
+       checkTCO(100000);
+       console.log('TCO supported');
+     } catch (e) {
+       if (e instanceof RangeError) {
+         console.log('TCO not supported');
+       }
+     }
+     ```
+
+     **Best practice:** Don't rely on TCO in JavaScript. Use iteration or trampolining for deep recursion.
+
+**[⬆ Back to Top](#table-of-contents)**
+
+510. ### What are the different ways to handle circular references in JSON?
+
+     Circular references occur when an object references itself directly or indirectly, causing `JSON.stringify()` to throw an error.
+
+     **Problem:**
+     ```javascript
+     const obj = { name: 'John' };
+     obj.self = obj; // Circular reference
+
+     // JSON.stringify(obj); // Throws: TypeError: Converting circular structure to JSON
+     ```
+
+     **Solution 1: Custom replacer function:**
+     ```javascript
+     function stringifyWithCircular(obj) {
+       const seen = new WeakSet();
+       return JSON.stringify(obj, (key, value) => {
+         if (typeof value === 'object' && value !== null) {
+           if (seen.has(value)) {
+             return '[Circular]';
+           }
+           seen.add(value);
+         }
+         return value;
+       });
+     }
+
+     const obj = { name: 'John' };
+     obj.self = obj;
+     console.log(stringifyWithCircular(obj));
+     // {"name":"John","self":"[Circular]"}
+     ```
+
+     **Solution 2: flatted library (preserves structure):**
+     ```javascript
+     import { stringify, parse } from 'flatted';
+
+     const obj = { name: 'John' };
+     obj.self = obj;
+
+     const serialized = stringify(obj);
+     const deserialized = parse(serialized);
+     console.log(deserialized.self === deserialized); // true
+     ```
+
+     **Solution 3: Manual tracking with paths:**
+     ```javascript
+     function safeStringify(obj, space) {
+       const seen = new Map();
+       let index = 0;
+
+       return JSON.stringify(obj, function(key, value) {
+         if (typeof value === 'object' && value !== null) {
+           if (seen.has(value)) {
+             return `[Circular:${seen.get(value)}]`;
+           }
+           seen.set(value, index++);
+         }
+         return value;
+       }, space);
+     }
+     ```
+
+     **Solution 4: Remove circular references:**
+     ```javascript
+     function removeCircular(obj) {
+       const seen = new WeakSet();
+
+       function detect(obj) {
+         if (typeof obj === 'object' && obj !== null) {
+           if (seen.has(obj)) {
+             return undefined;
+           }
+           seen.add(obj);
+
+           if (Array.isArray(obj)) {
+             return obj.map(detect).filter(x => x !== undefined);
+           }
+
+           const cleaned = {};
+           for (const [key, value] of Object.entries(obj)) {
+             const cleaned value = detect(value);
+             if (cleanedValue !== undefined) {
+               cleaned[key] = cleanedValue;
+             }
+           }
+           return cleaned;
+         }
+         return obj;
+       }
+
+       return detect(obj);
+     }
+
+     const obj = { name: 'John', child: { name: 'Jane' } };
+     obj.child.parent = obj;
+     const clean = removeCircular(obj);
+     console.log(JSON.stringify(clean));
+     ```
+
+     **Solution 5: Using toJSON method:**
+     ```javascript
+     class Node {
+       constructor(name) {
+         this.name = name;
+         this.parent = null;
+         this.children = [];
+       }
+
+       toJSON() {
+         return {
+           name: this.name,
+           children: this.children,
+           // Exclude parent to avoid circular reference
+         };
+       }
+     }
+
+     const root = new Node('root');
+     const child = new Node('child');
+     root.children.push(child);
+     child.parent = root;
+
+     console.log(JSON.stringify(root)); // Works fine
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+511. ### How do you implement a singleton pattern in JavaScript?
+
+     The singleton pattern ensures a class has only one instance and provides a global access point to it.
+
+     **Classic singleton with closure:**
+     ```javascript
+     const Singleton = (function() {
+       let instance;
+
+       function createInstance() {
+         const object = {
+           name: 'Singleton',
+           data: []
+         };
+         return object;
+       }
+
+       return {
+         getInstance() {
+           if (!instance) {
+             instance = createInstance();
+           }
+           return instance;
+         }
+       };
+     })();
+
+     const instance1 = Singleton.getInstance();
+     const instance2 = Singleton.getInstance();
+     console.log(instance1 === instance2); // true
+     ```
+
+     **ES6 class singleton:**
+     ```javascript
+     class Singleton {
+       constructor() {
+         if (Singleton.instance) {
+           return Singleton.instance;
+         }
+         this.data = [];
+         Singleton.instance = this;
+       }
+
+       addData(value) {
+         this.data.push(value);
+       }
+
+       getData() {
+         return this.data;
+       }
+     }
+
+     const s1 = new Singleton();
+     const s2 = new Singleton();
+     console.log(s1 === s2); // true
+     ```
+
+     **Module singleton (simplest):**
+     ```javascript
+     // config.js
+     class Config {
+       constructor() {
+         this.settings = {};
+       }
+
+       set(key, value) {
+         this.settings[key] = value;
+       }
+
+       get(key) {
+         return this.settings[key];
+       }
+     }
+
+     export default new Config(); // Export single instance
+
+     // usage.js
+     import config from './config.js';
+     config.set('apiUrl', 'https://api.example.com');
+     ```
+
+     **Singleton with WeakMap (private instance):**
+     ```javascript
+     const Singleton = (function() {
+       const instances = new WeakMap();
+
+       class Singleton {
+         constructor(key) {
+           if (instances.has(key)) {
+             return instances.get(key);
+           }
+           this.data = [];
+           instances.set(key, this);
+         }
+       }
+
+       return Singleton;
+     })();
+     ```
+
+     **Database connection singleton:**
+     ```javascript
+     class DatabaseConnection {
+       constructor() {
+         if (DatabaseConnection.instance) {
+           return DatabaseConnection.instance;
+         }
+
+         this.connection = null;
+         DatabaseConnection.instance = this;
+       }
+
+       connect(connectionString) {
+         if (!this.connection) {
+           this.connection = {
+             connectionString,
+             connected: true,
+             queries: []
+           };
+         }
+         return this.connection;
+       }
+
+       disconnect() {
+         if (this.connection) {
+           this.connection.connected = false;
+           this.connection = null;
+         }
+       }
+
+       query(sql) {
+         if (this.connection?.connected) {
+           this.connection.queries.push(sql);
+           return `Executing: ${sql}`;
+         }
+         throw new Error('Not connected');
+       }
+     }
+
+     const db1 = new DatabaseConnection();
+     db1.connect('mongodb://localhost:27017');
+
+     const db2 = new DatabaseConnection();
+     console.log(db1 === db2); // true
+     console.log(db2.query('SELECT * FROM users')); // Works
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+512. ### What is the Performance API and how is it used for measuring performance?
+
+     The Performance API provides high-precision timing information for measuring web application performance.
+
+     **Basic timing:**
+     ```javascript
+     // High-resolution timestamp
+     const start = performance.now();
+
+     // Some operation
+     for (let i = 0; i < 1000000; i++) {}
+
+     const end = performance.now();
+     console.log(`Operation took ${end - start} milliseconds`);
+     ```
+
+     **Navigation timing:**
+     ```javascript
+     // Get page load metrics
+     const perfData = performance.getEntriesByType('navigation')[0];
+
+     console.log('DNS lookup:', perfData.domainLookupEnd - perfData.domainLookupStart);
+     console.log('TCP connection:', perfData.connectEnd - perfData.connectStart);
+     console.log('Request time:', perfData.responseStart - perfData.requestStart);
+     console.log('Response time:', perfData.responseEnd - perfData.responseStart);
+     console.log('DOM processing:', perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart);
+     console.log('Total load time:', perfData.loadEventEnd - perfData.fetchStart);
+     ```
+
+     **Custom performance marks and measures:**
+     ```javascript
+     // Mark the start of an operation
+     performance.mark('operation-start');
+
+     // Do some work
+     await fetchData();
+     processData();
+
+     // Mark the end
+     performance.mark('operation-end');
+
+     // Measure the duration
+     performance.measure('operation', 'operation-start', 'operation-end');
+
+     // Get the measurement
+     const measures = performance.getEntriesByName('operation');
+     console.log(`Operation took ${measures[0].duration}ms`);
+
+     // Clean up
+     performance.clearMarks();
+     performance.clearMeasures();
+     ```
+
+     **Resource timing:**
+     ```javascript
+     // Get all resource timings
+     const resources = performance.getEntriesByType('resource');
+
+     resources.forEach(resource => {
+       console.log(`${resource.name}:`);
+       console.log(`  Duration: ${resource.duration}ms`);
+       console.log(`  Size: ${resource.transferSize} bytes`);
+       console.log(`  Type: ${resource.initiatorType}`);
+     });
+
+     // Filter specific resources
+     const images = performance.getEntriesByType('resource')
+       .filter(r => r.initiatorType === 'img');
+     ```
+
+     **Function execution time:**
+     ```javascript
+     function measureFunction(fn, ...args) {
+       const start = performance.now();
+       const result = fn(...args);
+       const end = performance.now();
+
+       console.log(`${fn.name} took ${end - start}ms`);
+       return result;
+     }
+
+     async function measureAsync(fn, ...args) {
+       const start = performance.now();
+       const result = await fn(...args);
+       const end = performance.now();
+
+       console.log(`${fn.name} took ${end - start}ms`);
+       return result;
+     }
+
+     measureFunction(expensiveOperation, arg1, arg2);
+     await measureAsync(asyncOperation, arg1);
+     ```
+
+     **Performance Observer (monitoring):**
+     ```javascript
+     const observer = new PerformanceObserver((list) => {
+       list.getEntries().forEach(entry => {
+         console.log(`${entry.name}: ${entry.duration}ms`);
+       });
+     });
+
+     // Observe specific entry types
+     observer.observe({ entryTypes: ['measure', 'resource', 'navigation'] });
+
+     // Later: disconnect
+     observer.disconnect();
+     ```
+
+     **Real User Monitoring (RUM):**
+     ```javascript
+     function sendPerformanceMetrics() {
+       const navigation = performance.getEntriesByType('navigation')[0];
+
+       const metrics = {
+         dns: navigation.domainLookupEnd - navigation.domainLookupStart,
+         tcp: navigation.connectEnd - navigation.connectStart,
+         ttfb: navigation.responseStart - navigation.requestStart,
+         download: navigation.responseEnd - navigation.responseStart,
+         domInteractive: navigation.domInteractive - navigation.fetchStart,
+         domComplete: navigation.domComplete - navigation.fetchStart,
+         loadComplete: navigation.loadEventEnd - navigation.fetchStart
+       };
+
+       // Send to analytics
+       fetch('/api/metrics', {
+         method: 'POST',
+         body: JSON.stringify(metrics)
+       });
+     }
+
+     window.addEventListener('load', () => {
+       setTimeout(sendPerformanceMetrics, 0);
+     });
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+513. ### What are the differences between SharedArrayBuffer and ArrayBuffer?
+
+     SharedArrayBuffer and ArrayBuffer are both fixed-length binary data buffers, but SharedArrayBuffer allows sharing memory between multiple workers/threads.
+
+     **ArrayBuffer (not shared):**
+     ```javascript
+     // Regular ArrayBuffer
+     const buffer = new ArrayBuffer(16);
+     const view = new Int32Array(buffer);
+
+     view[0] = 42;
+     console.log(view[0]); // 42
+
+     // Transferable but not shared
+     worker.postMessage(buffer, [buffer]);
+     // buffer is now neutered (length = 0)
+     ```
+
+     **SharedArrayBuffer (shared memory):**
+     ```javascript
+     // Main thread
+     const sharedBuffer = new SharedArrayBuffer(16);
+     const sharedView = new Int32Array(sharedBuffer);
+
+     sharedView[0] = 42;
+
+     // Send to worker (shared, not transferred)
+     worker.postMessage(sharedBuffer);
+
+     // Both main thread and worker can access the same memory
+     sharedView[0] = 100; // Worker will see this change
+     ```
+
+     **Key differences:**
+
+     | ArrayBuffer | SharedArrayBuffer |
+     |-------------|-------------------|
+     | Single context only | Multiple contexts (workers/threads) |
+     | Transferred (moved) between workers | Shared between workers |
+     | No synchronization needed | Requires Atomics for safe access |
+     | Always available | Requires secure context (HTTPS) |
+     | Original becomes neutered after transfer | Original remains valid |
+
+     **Using Atomics with SharedArrayBuffer:**
+     ```javascript
+     // Main thread
+     const sab = new SharedArrayBuffer(4);
+     const view = new Int32Array(sab);
+
+     worker.postMessage(sab);
+
+     // Atomic operations
+     Atomics.store(view, 0, 42);        // Write atomically
+     Atomics.add(view, 0, 10);          // Add 10 atomically
+     const value = Atomics.load(view, 0); // Read atomically
+
+     // Wait/notify pattern
+     Atomics.wait(view, 0, 0);          // Wait until value changes
+     Atomics.notify(view, 0, 1);        // Wake one waiter
+     ```
+
+     **Worker communication example:**
+     ```javascript
+     // Main thread
+     const sharedBuffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 2);
+     const sharedArray = new Int32Array(sharedBuffer);
+
+     const worker = new Worker('worker.js');
+     worker.postMessage({ buffer: sharedBuffer });
+
+     // Increment counter atomically
+     setInterval(() => {
+       const oldValue = Atomics.add(sharedArray, 0, 1);
+       console.log('Main thread incremented to:', oldValue + 1);
+     }, 1000);
+
+     // worker.js
+     self.onmessage = function(e) {
+       const sharedArray = new Int32Array(e.data.buffer);
+
+       setInterval(() => {
+         const oldValue = Atomics.add(sharedArray, 1, 1);
+         console.log('Worker incremented to:', oldValue + 1);
+       }, 1000);
+     };
+     ```
+
+     **Security requirements for SharedArrayBuffer:**
+     ```javascript
+     // Requires these headers:
+     // Cross-Origin-Opener-Policy: same-origin
+     // Cross-Origin-Embedder-Policy: require-corp
+
+     // Check availability
+     if (typeof SharedArrayBuffer !== 'undefined') {
+       console.log('SharedArrayBuffer is available');
+     } else {
+       console.log('SharedArrayBuffer is not available');
+     }
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+514. ### How do you prevent prototype pollution attacks in JavaScript?
+
+     Prototype pollution is a security vulnerability where attackers inject properties into Object.prototype, affecting all objects in the application.
+
+     **Vulnerable code:**
+     ```javascript
+     function merge(target, source) {
+       for (let key in source) {
+         target[key] = source[key];
+       }
+       return target;
+     }
+
+     // Attack payload
+     const malicious = JSON.parse('{"__proto__": {"polluted": "yes"}}');
+     merge({}, malicious);
+
+     console.log({}.polluted); // "yes" - all objects are polluted!
+     ```
+
+     **Prevention 1: Use Object.create(null):**
+     ```javascript
+     // Create objects without prototype
+     const safeObj = Object.create(null);
+     safeObj.__proto__ = { polluted: 'yes' };
+     console.log(safeObj.polluted); // undefined
+
+     // For configuration objects
+     const config = Object.create(null);
+     config.apiUrl = 'https://api.example.com';
+     ```
+
+     **Prevention 2: Check for dangerous keys:**
+     ```javascript
+     function safeMerge(target, source) {
+       const dangerousKeys = ['__proto__', 'constructor', 'prototype'];
+
+       for (let key in source) {
+         if (dangerousKeys.includes(key)) {
+           continue; // Skip dangerous keys
+         }
+         if (source.hasOwnProperty(key)) {
+           target[key] = source[key];
+         }
+       }
+       return target;
+     }
+     ```
+
+     **Prevention 3: Use Map instead of objects:**
+     ```javascript
+     const safeMap = new Map();
+     safeMap.set('__proto__', 'value');
+     // No pollution risk
+     ```
+
+     **Prevention 4: Freeze Object.prototype:**
+     ```javascript
+     Object.freeze(Object.prototype);
+     Object.freeze(Object);
+
+     // Now pollution attempts will fail
+     Object.prototype.polluted = 'no';
+     console.log({}.polluted); // undefined
+     ```
+
+     **Prevention 5: Validate object paths:**
+     ```javascript
+     function setDeepProperty(obj, path, value) {
+       const parts = path.split('.');
+       const dangerous = ['__proto__', 'constructor', 'prototype'];
+
+       // Validate each part of the path
+       if (parts.some(part => dangerous.includes(part))) {
+         throw new Error('Invalid property path');
+       }
+
+       let current = obj;
+       for (let i = 0; i < parts.length - 1; i++) {
+         if (!(parts[i] in current)) {
+           current[parts[i]] = {};
+         }
+         current = current[parts[i]];
+       }
+
+       current[parts[parts.length - 1]] = value;
+     }
+     ```
+
+     **Prevention 6: Use libraries with protection:**
+     ```javascript
+     // Use lodash's merge with customizer
+     const _ = require('lodash');
+
+     function safeMergeCustomizer(objValue, srcValue, key) {
+       const dangerous = ['__proto__', 'constructor', 'prototype'];
+       if (dangerous.includes(key)) {
+         return objValue; // Keep original value
+       }
+     }
+
+     const result = _.mergeWith({}, source, safeMergeCustomizer);
+     ```
+
+     **Prevention 7: Schema validation:**
+     ```javascript
+     const Ajv = require('ajv');
+     const ajv = new Ajv();
+
+     const schema = {
+       type: 'object',
+       properties: {
+         name: { type: 'string' },
+         age: { type: 'number' }
+       },
+       additionalProperties: false // Reject unknown properties
+     };
+
+     const validate = ajv.compile(schema);
+
+     function safeProcess(data) {
+       if (!validate(data)) {
+         throw new Error('Invalid data');
+       }
+       return data;
+     }
+     ```
+
+     **Prevention 8: JSON.parse with reviver:**
+     ```javascript
+     function safeJSONParse(text) {
+       return JSON.parse(text, (key, value) => {
+         const dangerous = ['__proto__', 'constructor', 'prototype'];
+         if (dangerous.includes(key)) {
+           return undefined; // Filter out dangerous keys
+         }
+         return value;
+       });
+     }
+
+     const safe = safeJSONParse('{"__proto__": {"polluted": "yes"}}');
+     console.log({}.polluted); // undefined
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+515. ### What is the Atomics API and when should it be used?
+
+     The Atomics API provides atomic operations on SharedArrayBuffer, ensuring thread-safe access to shared memory in multi-threaded JavaScript (workers).
+
+     **Basic atomic operations:**
+     ```javascript
+     const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 4);
+     const view = new Int32Array(sab);
+
+     // Atomic store - write a value
+     Atomics.store(view, 0, 42);
+
+     // Atomic load - read a value
+     const value = Atomics.load(view, 0); // 42
+
+     // Atomic add - add and return old value
+     const oldValue = Atomics.add(view, 0, 10); // returns 42, view[0] is now 52
+
+     // Atomic sub - subtract
+     Atomics.sub(view, 0, 2); // view[0] is now 50
+
+     // Atomic exchange - swap values
+     const prev = Atomics.exchange(view, 0, 100); // returns 50, view[0] is now 100
+
+     // Compare and exchange
+     const replaced = Atomics.compareExchange(view, 0, 100, 200);
+     // If view[0] === 100, set it to 200 and return 100
+     // Otherwise, return current value
+     ```
+
+     **Wait and notify (worker synchronization):**
+     ```javascript
+     // Main thread
+     const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT);
+     const view = new Int32Array(sab);
+
+     worker.postMessage(sab);
+
+     // Wait for worker to set value to 1
+     Atomics.wait(view, 0, 0); // Blocks until view[0] !== 0
+     console.log('Worker has finished');
+
+     // Worker thread
+     self.onmessage = function(e) {
+       const view = new Int32Array(e.data);
+
+       // Do some work
+       performTask();
+
+       // Signal completion
+       Atomics.store(view, 0, 1);
+       Atomics.notify(view, 0, 1); // Wake up one waiting thread
+     };
+     ```
+
+     **Mutex implementation:**
+     ```javascript
+     class Mutex {
+       constructor(sab, index) {
+         this.sab = sab;
+         this.index = index;
+       }
+
+       lock() {
+         const view = new Int32Array(this.sab);
+         while (true) {
+           const oldValue = Atomics.compareExchange(view, this.index, 0, 1);
+           if (oldValue === 0) {
+             return; // Successfully acquired lock
+           }
+           Atomics.wait(view, this.index, 1); // Wait if locked
+         }
+       }
+
+       unlock() {
+         const view = new Int32Array(this.sab);
+         Atomics.store(view, this.index, 0);
+         Atomics.notify(view, this.index, 1);
+       }
+     }
+
+     // Usage
+     const mutex = new Mutex(sab, 0);
+     mutex.lock();
+     try {
+       // Critical section
+       criticalOperation();
+     } finally {
+       mutex.unlock();
+     }
+     ```
+
+     **Counter with atomic operations:**
+     ```javascript
+     class AtomicCounter {
+       constructor() {
+         this.sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT);
+         this.view = new Int32Array(this.sab);
+       }
+
+       increment() {
+         return Atomics.add(this.view, 0, 1) + 1;
+       }
+
+       decrement() {
+         return Atomics.sub(this.view, 0, 1) - 1;
+       }
+
+       get value() {
+         return Atomics.load(this.view, 0);
+       }
+
+       set value(val) {
+         Atomics.store(this.view, 0, val);
+       }
+     }
+     ```
+
+     **Available atomic operations:**
+     ```javascript
+     // Arithmetic
+     Atomics.add(typedArray, index, value)
+     Atomics.sub(typedArray, index, value)
+
+     // Bitwise
+     Atomics.and(typedArray, index, value)
+     Atomics.or(typedArray, index, value)
+     Atomics.xor(typedArray, index, value)
+
+     // Memory
+     Atomics.load(typedArray, index)
+     Atomics.store(typedArray, index, value)
+     Atomics.exchange(typedArray, index, value)
+     Atomics.compareExchange(typedArray, index, expectedValue, replacementValue)
+
+     // Synchronization
+     Atomics.wait(typedArray, index, value, timeout)
+     Atomics.notify(typedArray, index, count)
+
+     // Utility
+     Atomics.isLockFree(size)
+     ```
+
+     **When to use Atomics:**
+     - Sharing data between web workers
+     - Implementing locks, semaphores, or other synchronization primitives
+     - Building concurrent data structures
+     - High-performance parallel computing
+     - Avoiding race conditions in shared memory
+
+**[⬆ Back to Top](#table-of-contents)**
+
+516. ### How do you implement a lazy loading pattern for modules?
+
+     Lazy loading defers module loading until they're actually needed, reducing initial bundle size and improving load time.
+
+     **Dynamic import (ES modules):**
+     ```javascript
+     // Traditional import - loaded immediately
+     import { heavyFunction } from './heavy-module.js';
+
+     // Dynamic import - loaded on demand
+     async function loadModule() {
+       const module = await import('./heavy-module.js');
+       module.heavyFunction();
+     }
+
+     // Or with destructuring
+     const { heavyFunction } = await import('./heavy-module.js');
+     ```
+
+     **Route-based lazy loading (React):**
+     ```javascript
+     import { lazy, Suspense } from 'react';
+
+     const Dashboard = lazy(() => import('./Dashboard'));
+     const Profile = lazy(() => import('./Profile'));
+
+     function App() {
+       return (
+         <Router>
+           <Suspense fallback={<div>Loading...</div>}>
+             <Routes>
+               <Route path="/dashboard" element={<Dashboard />} />
+               <Route path="/profile" element={<Profile />} />
+             </Routes>
+           </Suspense>
+         </Router>
+       );
+     }
+     ```
+
+     **Feature-based lazy loading:**
+     ```javascript
+     class FeatureLoader {
+       constructor() {
+         this.features = new Map();
+       }
+
+       async loadFeature(name) {
+         if (this.features.has(name)) {
+           return this.features.get(name);
+         }
+
+         const module = await import(`./features/${name}.js`);
+         this.features.set(name, module);
+         return module;
+       }
+     }
+
+     const loader = new FeatureLoader();
+
+     // Load feature only when needed
+     button.addEventListener('click', async () => {
+       const feature = await loader.loadFeature('advanced-charts');
+       feature.render(data);
+     });
+     ```
+
+     **Intersection Observer lazy loading:**
+     ```javascript
+     const observer = new IntersectionObserver((entries) => {
+       entries.forEach(async (entry) => {
+         if (entry.isIntersecting) {
+           const moduleName = entry.target.dataset.module;
+           const module = await import(`./modules/${moduleName}.js`);
+           module.init(entry.target);
+           observer.unobserve(entry.target);
+         }
+       });
+     });
+
+     // Observe elements
+     document.querySelectorAll('[data-module]').forEach(el => {
+       observer.observe(el);
+     });
+     ```
+
+     **Conditional lazy loading:**
+     ```javascript
+     async function loadEditor() {
+       if (window.innerWidth > 768) {
+         // Load full editor for desktop
+         const { FullEditor } = await import('./FullEditor.js');
+         return new FullEditor();
+       } else {
+         // Load mobile editor
+         const { MobileEditor } = await import('./MobileEditor.js');
+         return new MobileEditor();
+       }
+     }
+     ```
+
+     **Prefetching for better UX:**
+     ```javascript
+     // Prefetch on hover
+     link.addEventListener('mouseenter', () => {
+       import(/* webpackPrefetch: true */ './heavy-module.js');
+     });
+
+     // Preload critical modules after initial load
+     window.addEventListener('load', () => {
+       setTimeout(() => {
+         import(/* webpackPreload: true */ './important-module.js');
+       }, 1000);
+     });
+     ```
+
+     **Module caching:**
+     ```javascript
+     class ModuleCache {
+       constructor() {
+         this.cache = new Map();
+         this.pending = new Map();
+       }
+
+       async load(path) {
+         // Return cached module
+         if (this.cache.has(path)) {
+           return this.cache.get(path);
+         }
+
+         // Return pending promise
+         if (this.pending.has(path)) {
+           return this.pending.get(path);
+         }
+
+         // Load module
+         const promise = import(path).then(module => {
+           this.cache.set(path, module);
+           this.pending.delete(path);
+           return module;
+         });
+
+         this.pending.set(path, promise);
+         return promise;
+       }
+     }
+
+     const moduleCache = new ModuleCache();
+     const module = await moduleCache.load('./module.js');
+     ```
+
+     **Webpack code splitting:**
+     ```javascript
+     // Magic comments for webpack
+     const module = await import(
+       /* webpackChunkName: "my-chunk" */
+       /* webpackMode: "lazy" */
+       './module.js'
+     );
+     ```
+
+**[⬆ Back to Top](#table-of-contents)**
+
+517. ### What are the best practices for optimizing JavaScript bundle size?
+
+     Optimizing bundle size improves load times, reduces bandwidth usage, and enhances user experience, especially on slow networks.
+
+     **1. Code splitting:**
+     ```javascript
+     // Split by route
+     const Home = lazy(() => import('./routes/Home'));
+     const About = lazy(() => import('./routes/About'));
+
+     // Split by feature
+     button.addEventListener('click', async () => {
+       const module = await import('./features/analytics.js');
+       module.trackEvent('button_click');
+     });
+     ```
+
+     **2. Tree shaking (remove unused code):**
+     ```javascript
+     // Bad - imports entire library
+     import _ from 'lodash';
+     _.debounce(fn, 300);
+
+     // Good - imports only what's needed
+     import debounce from 'lodash/debounce';
+     debounce(fn, 300);
+
+     // Even better - use ES modules
+     import { debounce } from 'lodash-es';
+     ```
+
+     **3. Minimize dependencies:**
+     ```javascript
+     // Before - 50KB library for date formatting
+     import moment from 'moment';
+     moment().format('YYYY-MM-DD');
+
+     // After - native Intl API (0KB)
+     new Intl.DateTimeFormat('en-CA').format(new Date());
+
+     // Or small alternative - 2KB
+     import { format } from 'date-fns';
+     format(new Date(), 'yyyy-MM-dd');
+     ```
+
+     **4. Use production builds:**
+     ```javascript
+     // package.json
+     {
+       "scripts": {
+         "build": "NODE_ENV=production webpack --mode production"
+       }
+     }
+
+     // React automatically removes development code
+     if (process.env.NODE_ENV !== 'production') {
+       console.log('Development mode');
+     }
+     ```
+
+     **5. Compress and minify:**
+     ```javascript
+     // webpack.config.js
+     const TerserPlugin = require('terser-webpack-plugin');
+
+     module.exports = {
+       optimization: {
+         minimize: true,
+         minimizer: [new TerserPlugin({
+           terserOptions: {
+             compress: {
+               drop_console: true, // Remove console.logs
+               drop_debugger: true
+             }
+           }
+         })]
+       }
+     };
+     ```
+
+     **6. Analyze bundle:**
+     ```bash
+     # Install bundle analyzer
+     npm install --save-dev webpack-bundle-analyzer
+
+     # Run analysis
+     npx webpack-bundle-analyzer stats.json
+     ```
+
+     **7. Remove duplicate dependencies:**
+     ```javascript
+     // webpack.config.js
+     module.exports = {
+       optimization: {
+         splitChunks: {
+           chunks: 'all',
+           cacheGroups: {
+             vendor: {
+               test: /[\\/]node_modules[\\/]/,
+               name: 'vendors',
+               chunks: 'all'
+             }
+           }
+         }
+       }
+     };
+     ```
+
+     **8. Use CDN for large libraries:**
+     ```html
+     <!-- Load from CDN instead of bundling -->
+     <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+     ```
+
+     **9. Defer non-critical JavaScript:**
+     ```html
+     <!-- Critical - inline or load immediately -->
+     <script src="critical.js"></script>
+
+     <!-- Non-critical - defer -->
+     <script src="analytics.js" defer></script>
+     <script src="social-widgets.js" async></script>
+     ```
+
+     **10. Remove dead code:**
+     ```javascript
+     // Use /* #__PURE__ */ comment for tree shaking
+     const result = /* #__PURE__ */ expensiveOperation();
+
+     // Configure webpack to remove unused exports
+     module.exports = {
+       optimization: {
+         usedExports: true,
+         sideEffects: false
+       }
+     };
+     ```
+
+     **11. Optimize images and assets:**
+     ```javascript
+     // Use image-webpack-loader
+     module.exports = {
+       module: {
+         rules: [{
+           test: /\.(png|jpe?g|gif|svg)$/,
+           use: [
+             'file-loader',
+             {
+               loader: 'image-webpack-loader',
+               options: {
+                 mozjpeg: { quality: 75 },
+                 pngquant: { quality: [0.65, 0.9] }
+               }
+             }
+           ]
+         }]
+       }
+     };
+     ```
+
+     **12. Enable gzip/brotli compression:**
+     ```javascript
+     // Server-side compression (Express)
+     const compression = require('compression');
+     app.use(compression());
+
+     // Build-time compression
+     const CompressionPlugin = require('compression-webpack-plugin');
+     plugins: [
+       new CompressionPlugin({
+         algorithm: 'brotliCompress',
+         test: /\.(js|css|html|svg)$/,
+         threshold: 10240,
+         minRatio: 0.8
+       })
+     ]
+     ```
 
 **[⬆ Back to Top](#table-of-contents)**
 
